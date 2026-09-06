@@ -1,0 +1,172 @@
+.players-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--warn-soft);
+  border: 1px solid color-mix(in srgb, var(--warn) 40%, transparent);
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  margin-bottom: 20px;
+}
+
+.players-note__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--warn) 22%, transparent);
+  color: var(--warn);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.players-note p {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--text);
+}
+
+.player-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.player-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  padding-bottom: 40px;
+}
+
+.player-card {
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.player-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-2);
+}
+
+.player-card__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.player-avatar {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--bg);
+}
+
+.player-card__id {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.player-card__name {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.player-card__sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-card__flag {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.player-spec {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 12px;
+  row-gap: 10px;
+  margin: 16px 0 0;
+}
+
+.player-spec dt {
+  margin: 0;
+  padding-top: 2px;
+  font-size: 10.5px;
+}
+
+.player-spec dd {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.player-spec__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.player-spec__note {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.player-spec__kg {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.player-card__note {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.player-card__hr {
+  margin-top: 14px;
+}
+
+.player-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.player-card__source a {
+  font-size: 13px;
+}
+
+.player-card__verified {
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--dim);
+}
