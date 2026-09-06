@@ -1,9 +1,10 @@
 import { strings } from './strings';
 import { rackets } from './rackets';
+import { players } from './players';
 import type { TennisString, Racket } from './types';
 
 export * from './types';
-export { strings, rackets };
+export { strings, rackets, players };
 
 export const stringById: ReadonlyMap<string, TennisString> = new Map(strings.map((s) => [s.id, s]));
 export const racketById: ReadonlyMap<string, Racket> = new Map(rackets.map((r) => [r.id, r]));
