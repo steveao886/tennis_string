@@ -1,0 +1,92 @@
+export const en = {
+  'nav.lab': 'String Lab',
+  'nav.rackets': 'Rackets',
+  'nav.players': 'Pro Setups',
+  'nav.langToggle': '中文',
+
+  'hero.title': 'String Lab',
+  'hero.subtitle':
+    'Pick strings, tension and a frame, watch the feel change live, then compare with what the pros actually use.',
+
+  'lab.inputs': 'Setup',
+  'lab.readout': 'Read-out',
+  'lab.racket': 'Racket',
+  'lab.racketNone': 'No racket · string bed only',
+  'lab.mains': 'Mains',
+  'lab.crosses': 'Crosses',
+  'lab.gauge': 'Gauge',
+  'lab.sameAsMains': 'Same as mains',
+  'lab.linkTensions': 'Link tensions',
+  'lab.linkTensionsHint': 'crosses follow mains −2 lb',
+  'lab.mainsTension': 'Mains tension',
+  'lab.crossesTension': 'Crosses tension',
+  'lab.recBand': 'recommended for this racket',
+  'lab.effective': 'Effective tension',
+  'lab.share': 'Copy link',
+  'lab.shareCopied': 'Link copied',
+  'lab.reset': 'Reset',
+  'lab.insights': 'What this setup does',
+  'lab.noInsights': 'A balanced setup. Nothing to flag.',
+  'lab.attributes': 'Attributes',
+
+  'attr.power': 'Power',
+  'attr.control': 'Control',
+  'attr.spin': 'Spin',
+  'attr.comfort': 'Comfort',
+  'attr.durability': 'Durability',
+  'attr.tensionMaintenance': 'Tension hold',
+
+  'material.poly': 'Polyester',
+  'material.multifilament': 'Multifilament',
+  'material.natural-gut': 'Natural gut',
+  'material.synthetic-gut': 'Synthetic gut',
+  'material.kevlar': 'Kevlar',
+
+  'shape.round': 'Round',
+  'shape.shaped': 'Shaped',
+  'shape.textured': 'Textured',
+
+  'rackets.title': 'Rackets',
+  'rackets.subtitle':
+    'Wilson and Head frames, what each one adds to the string bed, and the tension band they like.',
+  'rackets.all': 'All',
+  'rackets.useInLab': 'Use in Lab',
+  'rackets.headSize': 'Head',
+  'rackets.weight': 'Weight',
+  'rackets.balance': 'Balance',
+  'rackets.stiffness': 'Stiffness',
+  'rackets.pattern': 'Pattern',
+  'rackets.beam': 'Beam',
+  'rackets.recTension': 'Tension',
+  'rackets.inUse': 'In lab',
+
+  'players.title': 'Pro Setups',
+  'players.subtitle':
+    'What the pros actually string, from published interviews and stringer reports. Load one and tweak it.',
+  'players.all': 'All',
+  'players.atp': 'ATP',
+  'players.wta': 'WTA',
+  'players.legends': 'Legends',
+  'players.loadInLab': 'Load in Lab',
+  'players.source': 'Source',
+  'players.verifiedOn': 'Checked',
+  'players.disclaimer':
+    'Pro setups change with tournaments, surfaces and weather. Treat these as a starting point, not gospel.',
+  'players.racket': 'Racket',
+  'players.mains': 'Mains',
+  'players.crosses': 'Crosses',
+  'players.tension': 'Tension',
+  'players.substituted': "{name} isn't in the catalogue, loaded {sub} instead",
+
+  'toast.loadedPlayer': "Loaded {name}'s setup",
+  'toast.loadedRacket': 'Using {name}',
+
+  'footer.disclaimer':
+    'Ratings are editorial estimates based on published reviews, not lab measurements.',
+  'footer.source': 'Source on GitHub',
+
+  'unit.lb': 'lb',
+  'unit.kg': 'kg',
+} as const;
+
+export type Key = keyof typeof en;
