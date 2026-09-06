@@ -311,7 +311,7 @@ export const players: Player[] = [
     nameZh: '费德勒',
     country: 'CH',
     tour: 'Legend',
-    racket: { label: 'Wilson Pro Staff RF97 Autograph', note: { zh: '与后来推出的 Wilson RF 01 Pro 并非同一款球拍。', en: 'Not the same frame as the later Wilson RF 01 Pro.' } },
+    racket: { label: 'Wilson Pro Staff RF97 Autograph', id: 'wilson-pro-staff-rf97-autograph', note: { zh: '与后来推出的 Wilson RF 01 Pro 并非同一款球拍。', en: 'Not the same frame as the later Wilson RF 01 Pro.' } },
     mains: { stringId: 'wilson-natural-gut', label: 'Wilson Natural Gut', gauge: 1.3 },
     crosses: { stringId: 'luxilon-alu-power-rough', label: 'Luxilon Alu Power Rough', gauge: 1.25 },
     tension: { mains: 60, crosses: 56 },

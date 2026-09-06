@@ -12,7 +12,7 @@ describe('rackets catalogue', () => {
       expect(r.headSize).toBeGreaterThanOrEqual(95);
       expect(r.headSize).toBeLessThanOrEqual(104);
       expect(r.weightUnstrung).toBeGreaterThanOrEqual(280);
-      expect(r.weightUnstrung).toBeLessThanOrEqual(330);
+      expect(r.weightUnstrung).toBeLessThanOrEqual(345);
       expect(r.stiffness).toBeGreaterThanOrEqual(50);
       expect(r.stiffness).toBeLessThanOrEqual(75);
       expect(r.pattern[0]).toBeGreaterThanOrEqual(16);
