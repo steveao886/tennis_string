@@ -1,0 +1,20 @@
+.radar {
+  width: 100%;
+  height: auto;
+  max-width: 440px;
+  display: block;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.radar-label {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  fill: var(--muted);
+}
+
+.radar-value {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--text);
+}
