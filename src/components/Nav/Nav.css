@@ -95,8 +95,19 @@
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 520px) {
   .nav__subtitle {
+    display: none;
+  }
+  .nav__section-btn {
+    padding: 0 11px;
+    font-size: 12.5px;
+    min-height: 36px;
+  }
+}
+
+@media (max-width: 420px) {
+  .nav__title {
     display: none;
   }
 }

@@ -20,8 +20,10 @@ export function Select<T extends string | number>(props: {
   groups: SelectGroup<T>[];
   hint?: ReactNode;
   compact?: boolean;
+  hideLabel?: boolean;
+  disabled?: boolean;
 }): JSX.Element {
-  const { id, label, value, onChange, groups, hint, compact } = props;
+  const { id, label, value, onChange, groups, hint, compact, hideLabel, disabled } = props;
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const raw = e.target.value;
@@ -29,8 +31,8 @@ export function Select<T extends string | number>(props: {
   }
 
   return (
-    <div className="select-field">
-      <label htmlFor={id} className="select-field__label">
+    <div className={disabled ? 'select-field select-field--disabled' : 'select-field'}>
+      <label htmlFor={id} className={hideLabel ? 'select-field__label sr-only' : 'select-field__label'}>
         {label}
       </label>
       <select
@@ -38,6 +40,7 @@ export function Select<T extends string | number>(props: {
         className={compact ? 'select-field__control select-field__control--compact' : 'select-field__control'}
         value={value}
         onChange={handleChange}
+        disabled={disabled}
       >
         {groups.map((group, gi) =>
           group.label ? (

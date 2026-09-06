@@ -14,7 +14,8 @@ export type SetupAction =
   | { type: 'setLinkTensions'; on: boolean }
   | { type: 'setUnit'; unit: Unit }
   | { type: 'loadPlayer'; player: Player; mainsId: string; crossesId: string }
-  | { type: 'reset' };
+  | { type: 'reset' }
+  | { type: 'hydrate'; state: SetupState };
 
 const gaugeFor = (id: string, wanted?: number): number => {
   const s = stringById.get(id)!;
@@ -60,6 +61,8 @@ export function reduce(s: SetupState, a: SetupAction): SetupState {
     }
     case 'reset':
       return { ...DEFAULT_SETUP, unit: s.unit };
+    case 'hydrate':
+      return a.state;
   }
 }
 
@@ -69,5 +72,13 @@ export function useSetup(): [SetupState, Dispatch<SetupAction>] {
     const h = serializeSetup(state);
     if (window.location.hash !== h) history.replaceState(null, '', h);
   }, [state]);
+  useEffect(() => {
+    const onHash = () => {
+      const next = parseSetup(window.location.hash);
+      dispatch({ type: 'hydrate', state: next });
+    };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
   return [state, dispatch];
 }

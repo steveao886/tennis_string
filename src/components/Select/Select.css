@@ -56,3 +56,10 @@
 .select-hint {
   margin-top: 6px;
 }
+
+.select-field--disabled {
+  opacity: 0.5;
+}
+.select-field--disabled .select-field__control {
+  cursor: not-allowed;
+}

@@ -31,14 +31,14 @@ export const DEFAULT_SETUP: SetupState = {
 export const clampTension = (v: number): number => Math.min(TENSION_MAX, Math.max(TENSION_MIN, Math.round(v)));
 
 export function serializeSetup(s: SetupState): string {
-  const p = new URLSearchParams();
-  if (s.racketId) p.set('r', s.racketId);
-  p.set('m', `${s.mainsId}:${s.mainsGauge}`);
-  p.set('x', `${s.crossesId}:${s.crossesGauge}`);
-  p.set('t', `${s.mainsTension},${s.crossesTension}`);
-  p.set('u', s.unit);
-  if (!s.linkTensions) p.set('l', '0');
-  return `#${p.toString()}`;
+  const parts: string[] = [];
+  if (s.racketId) parts.push(`r=${s.racketId}`);
+  parts.push(`m=${s.mainsId}:${s.mainsGauge}`);
+  parts.push(`x=${s.crossesId}:${s.crossesGauge}`);
+  parts.push(`t=${s.mainsTension},${s.crossesTension}`);
+  parts.push(`u=${s.unit}`);
+  if (!s.linkTensions) parts.push('l=0');
+  return `#${parts.join('&')}`;
 }
 
 function parseStringRef(v: string | null): { id: string; gauge: number } | null {

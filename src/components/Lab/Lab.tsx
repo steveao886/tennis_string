@@ -130,7 +130,7 @@ export function Lab(props: { setup: SetupState; dispatch: Dispatch<SetupAction> 
   );
 
   const gaugeGroups = (gauges: number[]): SelectGroup<number>[] => [
-    { label: '', options: gauges.map((g) => ({ value: g, label: `${g} mm` })) },
+    { label: '', options: gauges.map((g) => ({ value: g, label: `${g.toFixed(2)} mm` })) },
   ];
 
   const effLb = effectiveTension(input);
@@ -167,6 +167,7 @@ export function Lab(props: { setup: SetupState; dispatch: Dispatch<SetupAction> 
             <Select
               id="mains"
               label={t('lab.mains')}
+              hideLabel
               value={setup.mainsId}
               onChange={(v) => dispatch({ type: 'setMains', id: v })}
               groups={stringGroups}
@@ -196,6 +197,8 @@ export function Lab(props: { setup: SetupState; dispatch: Dispatch<SetupAction> 
             <Select
               id="crosses"
               label={t('lab.crosses')}
+              hideLabel
+              disabled={same}
               value={setup.crossesId}
               onChange={(v) => dispatch({ type: 'setCrosses', id: v })}
               groups={stringGroups}
@@ -204,6 +207,7 @@ export function Lab(props: { setup: SetupState; dispatch: Dispatch<SetupAction> 
             <Select
               id="crosses-gauge"
               label={t('lab.gauge')}
+              disabled={same}
               value={setup.crossesGauge}
               onChange={(g) => dispatch({ type: 'setCrossesGauge', gauge: g })}
               groups={gaugeGroups(crosses.gauges)}

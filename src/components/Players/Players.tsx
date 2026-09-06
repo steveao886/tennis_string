@@ -107,7 +107,7 @@ export function Players(props: { dispatch: Dispatch<SetupAction>; onGoLab: () =>
                 <dd>
                   <span className="player-spec__row">
                     {p.mains.label}
-                    {p.mains.gauge != null && <span className="chip num">{p.mains.gauge}</span>}
+                    {p.mains.gauge != null && <span className="chip num">{p.mains.gauge.toFixed(2)}</span>}
                   </span>
                 </dd>
 
@@ -115,7 +115,7 @@ export function Players(props: { dispatch: Dispatch<SetupAction>; onGoLab: () =>
                 <dd>
                   <span className="player-spec__row">
                     {p.crosses.label}
-                    {p.crosses.gauge != null && <span className="chip num">{p.crosses.gauge}</span>}
+                    {p.crosses.gauge != null && <span className="chip num">{p.crosses.gauge.toFixed(2)}</span>}
                   </span>
                 </dd>
 
