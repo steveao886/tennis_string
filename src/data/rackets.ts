@@ -15,7 +15,7 @@ export const rackets: Racket[] = [
     recTension: [50, 60],
     attrs: { power: 55, control: 88, spin: 60, comfort: 60, durability: 85, tensionMaintenance: 60 },
     blurb: {
-      zh: '经典的手感型球拍,反馈直接扎实,适合能自己制造力量、追求精准控制的进攻型球员。',
+      zh: '经典的手感型球拍，反馈直接扎实，适合能自己制造力量、追求精准控制的进攻型球员。',
       en: 'A classic feel-first frame with direct, solid feedback, suited to power-generating players who prize precision over free power.',
     },
   },
@@ -33,7 +33,7 @@ export const rackets: Racket[] = [
     recTension: [50, 60],
     attrs: { power: 54, control: 89, spin: 60, comfort: 62, durability: 84, tensionMaintenance: 60 },
     blurb: {
-      zh: '费德勒签名衣钵的延续,手感细腻、指向性极强,献给追求经典操控感的技术型球员。',
+      zh: '费德勒签名衣钵的延续，手感细腻、指向性极强，献给追求经典操控感的技术型球员。',
       en: "The spiritual successor to Federer's stick, with refined feel and pinpoint directional control for technically minded players.",
     },
   },
@@ -51,7 +51,7 @@ export const rackets: Racket[] = [
     recTension: [50, 60],
     attrs: { power: 55, control: 82, spin: 68, comfort: 70, durability: 75, tensionMaintenance: 62 },
     blurb: {
-      zh: '手感最有连接感的现代控制拍,甜区反馈清晰,适合能自己发力的进攻型底线球员。',
+      zh: '手感最有连接感的现代控制拍，甜区反馈清晰，适合能自己发力的进攻型底线球员。',
       en: 'The most connected-feeling modern control frame; clear feedback from the sweet spot for aggressive baseliners who generate their own pace.',
     },
   },
@@ -69,7 +69,7 @@ export const rackets: Racket[] = [
     recTension: [50, 60],
     attrs: { power: 50, control: 90, spin: 55, comfort: 68, durability: 78, tensionMaintenance: 63 },
     blurb: {
-      zh: '密拍面带来更扎实的落点控制和更少的球线间摩擦,适合喜欢平击、追求精细调校的球员。',
+      zh: '密拍面带来更扎实的落点控制和更少的球线间摩擦，适合喜欢平击、追求精细调校的球员。',
       en: 'The denser string pattern trades some spin for pinpoint depth control, ideal for flatter hitters who like to fine-tune their setup.',
     },
   },
@@ -87,7 +87,7 @@ export const rackets: Racket[] = [
     recTension: [50, 60],
     attrs: { power: 62, control: 76, spin: 70, comfort: 72, durability: 70, tensionMaintenance: 64 },
     blurb: {
-      zh: '在Blade的手感基础上放大甜区和容错率,适合水平提升中、希望兼顾控制与轻松发力的球员。',
+      zh: '在Blade的手感基础上放大甜区和容错率，适合水平提升中、希望兼顾控制与轻松发力的球员。',
       en: "A larger, more forgiving take on the Blade feel, good for improving players who want control without sacrificing easy power.",
     },
   },
@@ -105,7 +105,7 @@ export const rackets: Racket[] = [
     recTension: [48, 58],
     attrs: { power: 70, control: 55, spin: 70, comfort: 95, durability: 55, tensionMaintenance: 68 },
     blurb: {
-      zh: '独特的弯曲手感极大缓解了手臂负担,适合有伤病顾虑或偏好柔软触感的休闲进阶球员。',
+      zh: '独特的弯曲手感极大缓解了手臂负担，适合有伤病顾虑或偏好柔软触感的休闲进阶球员。',
       en: 'Its signature flex delivers unmatched arm comfort, a great fit for injury-prone or recreational players who want a plush, forgiving feel.',
     },
   },
@@ -123,7 +123,7 @@ export const rackets: Racket[] = [
     recTension: [50, 60],
     attrs: { power: 85, control: 60, spin: 68, comfort: 45, durability: 65, tensionMaintenance: 58 },
     blurb: {
-      zh: '厚拍框带来充沛的免费力量,适合挥拍速度有限、希望轻松打出深球的全能型球员。',
+      zh: '厚拍框带来充沛的免费力量，适合挥拍速度有限、希望轻松打出深球的全能型球员。',
       en: 'The thick beam pumps out easy free power, well suited to all-court players with shorter swings who want depth without extra effort.',
     },
   },
@@ -141,7 +141,7 @@ export const rackets: Racket[] = [
     recTension: [50, 60],
     attrs: { power: 68, control: 72, spin: 80, comfort: 70, durability: 65, tensionMaintenance: 62 },
     blurb: {
-      zh: '少见的16x20拍型带来更多旋转潜力,兼顾力量与控制,适合想要全面升级手感的过渡型球员。',
+      zh: '少见的16x20拍型带来更多旋转潜力，兼顾力量与控制，适合想要全面升级手感的过渡型球员。',
       en: 'An unusual 16x20 pattern unlocks extra spin while balancing power and control, ideal for players transitioning to a more complete setup.',
     },
   },
@@ -159,7 +159,7 @@ export const rackets: Racket[] = [
     recTension: [48, 57],
     attrs: { power: 70, control: 72, spin: 72, comfort: 72, durability: 68, tensionMaintenance: 63 },
     blurb: {
-      zh: '速度与控制的经典平衡,出球干脆利落,是全面型底线球员的百搭之选。',
+      zh: '速度与控制的经典平衡，出球干脆利落，是全面型底线球员的百搭之选。',
       en: 'A classic balance of pace and control with a crisp, direct response, a versatile go-to for all-around baseliners.',
     },
   },
@@ -177,7 +177,7 @@ export const rackets: Racket[] = [
     recTension: [48, 57],
     attrs: { power: 62, control: 85, spin: 62, comfort: 68, durability: 80, tensionMaintenance: 60 },
     blurb: {
-      zh: '更重、更密的Pro版本带来职业级的稳定性和精准度,适合力量和技术都到位的高水平球员。',
+      zh: '更重、更密的Pro版本带来职业级的稳定性和精准度，适合力量和技术都到位的高水平球员。',
       en: 'The heavier, denser Pro version brings tour-level stability and precision for advanced players with the technique to match.',
     },
   },
@@ -195,7 +195,7 @@ export const rackets: Racket[] = [
     recTension: [48, 57],
     attrs: { power: 62, control: 80, spin: 70, comfort: 80, durability: 70, tensionMaintenance: 64 },
     blurb: {
-      zh: '均衡舒适的操控型球拍,16x20拍型带来出色手感,适合注重战术和落点的全场型球员。',
+      zh: '均衡舒适的操控型球拍，16x20拍型带来出色手感，适合注重战术和落点的全场型球员。',
       en: 'A balanced, comfortable control frame whose 16x20 pattern gives excellent touch, suited to tactical all-court players who live on placement.',
     },
   },
@@ -213,7 +213,7 @@ export const rackets: Racket[] = [
     recTension: [48, 57],
     attrs: { power: 55, control: 88, spin: 60, comfort: 82, durability: 85, tensionMaintenance: 66 },
     blurb: {
-      zh: '纤薄拍框配合更密的拍线排布,提供极致的操控性和稳定性,是技术流球员的理想武器。',
+      zh: '纤薄拍框配合更密的拍线排布，提供极致的操控性和稳定性，是技术流球员的理想武器。',
       en: 'A slim beam paired with a denser string pattern delivers exceptional control and stability, an ideal weapon for technical, all-court players.',
     },
   },
@@ -231,7 +231,7 @@ export const rackets: Racket[] = [
     recTension: [48, 57],
     attrs: { power: 65, control: 78, spin: 70, comfort: 70, durability: 70, tensionMaintenance: 63 },
     blurb: {
-      zh: '偏动感的手感和清脆的击球声,兼顾旋转和控制,适合喜欢主动进攻的多面手球员。',
+      zh: '偏动感的手感和清脆的击球声，兼顾旋转和控制，适合喜欢主动进攻的多面手球员。',
       en: 'A lively feel and a crisp sound combine spin and control, a good match for versatile players who like to dictate play.',
     },
   },
@@ -249,7 +249,7 @@ export const rackets: Racket[] = [
     recTension: [48, 57],
     attrs: { power: 62, control: 84, spin: 68, comfort: 68, durability: 82, tensionMaintenance: 62 },
     blurb: {
-      zh: '更重的规格带来更强的稳定性和穿透力,适合力量充沛、追求进攻硬度的高阶球员。',
+      zh: '更重的规格带来更强的稳定性和穿透力，适合力量充沛、追求进攻硬度的高阶球员。',
       en: 'The heavier spec adds stability and plow-through, suited to powerful, advanced players who want extra bite on their attacking shots.',
     },
   },
@@ -267,7 +267,7 @@ export const rackets: Racket[] = [
     recTension: [48, 57],
     attrs: { power: 45, control: 92, spin: 55, comfort: 75, durability: 85, tensionMaintenance: 65 },
     blurb: {
-      zh: '经典古典手感的代表作,密集拍线带来无与伦比的精准度,只适合技术非常扎实的球员。',
+      zh: '经典古典手感的代表作，密集拍线带来无与伦比的精准度，只适合技术非常扎实的球员。',
       en: "A classic, old-school feel with a dense pattern that rewards precision above all else, meant only for players with rock-solid technique.",
     },
   },
@@ -285,7 +285,7 @@ export const rackets: Racket[] = [
     recTension: [48, 57],
     attrs: { power: 50, control: 88, spin: 65, comfort: 72, durability: 85, tensionMaintenance: 64 },
     blurb: {
-      zh: '相比MP拍型多了一分旋转潜力,同时保留了Prestige家族一贯的沉稳扎实手感。',
+      zh: '相比MP拍型多了一分旋转潜力，同时保留了Prestige家族一贯的沉稳扎实手感。',
       en: 'A touch more spin potential than the MP while keeping the Prestige family\'s trademark solid, plated-down feel.',
     },
   },
@@ -303,7 +303,7 @@ export const rackets: Racket[] = [
     recTension: [48, 57],
     attrs: { power: 75, control: 68, spin: 90, comfort: 60, durability: 65, tensionMaintenance: 61 },
     blurb: {
-      zh: '主打旋转的开放式拍型,配合较大甜区,适合喜欢大上旋、站位靠后的现代底线球员。',
+      zh: '主打旋转的开放式拍型，配合较大甜区，适合喜欢大上旋、站位靠后的现代底线球员。',
       en: 'A spin-forward, open pattern with a generous sweet spot, tailor-made for modern baseliners who like heavy topspin from behind the line.',
     },
   },
@@ -321,7 +321,7 @@ export const rackets: Racket[] = [
     recTension: [48, 57],
     attrs: { power: 65, control: 76, spin: 85, comfort: 65, durability: 70, tensionMaintenance: 62 },
     blurb: {
-      zh: '更小的拍面和更重的规格换来更多控制,同时保留了Extreme家族出色的旋转能力。',
+      zh: '更小的拍面和更重的规格换来更多控制，同时保留了Extreme家族出色的旋转能力。',
       en: 'A smaller head and heavier spec trade in extra control while keeping the Extreme family\'s excellent spin production.',
     },
   },
@@ -339,7 +339,7 @@ export const rackets: Racket[] = [
     recTension: [48, 57],
     attrs: { power: 80, control: 62, spin: 78, comfort: 65, durability: 60, tensionMaintenance: 60 },
     blurb: {
-      zh: '轻量化设计带来极快的挥拍速度和充沛力量,适合喜欢快节奏对抗的进攻型球员。',
+      zh: '轻量化设计带来极快的挥拍速度和充沛力量，适合喜欢快节奏对抗的进攻型球员。',
       en: 'A lighter build enables fast swing speeds and easy power, suited to attacking players who thrive in fast-paced exchanges.',
     },
   },
@@ -357,7 +357,7 @@ export const rackets: Racket[] = [
     recTension: [48, 57],
     attrs: { power: 72, control: 72, spin: 75, comfort: 62, durability: 72, tensionMaintenance: 61 },
     blurb: {
-      zh: 'Pro规格提升了稳定性和控制力,是希望在力量与精准之间取得更好平衡的进阶之选。',
+      zh: 'Pro规格提升了稳定性和控制力，是希望在力量与精准之间取得更好平衡的进阶之选。',
       en: "The Pro spec adds stability and control, a solid step up for players seeking a better balance between power and precision.",
     },
   },
