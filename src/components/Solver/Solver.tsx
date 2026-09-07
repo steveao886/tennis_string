@@ -1,11 +1,13 @@
 import { useCallback, useDeferredValue, useMemo, useState, type Dispatch } from 'react';
-import { ATTRS, type Attr, type Attrs, type Material } from '../../data/types';
+import { racketById } from '../../data';
+import { ATTRS, type Attr, type Attrs } from '../../data/types';
 import { computeBed } from '../../model/stringbed';
 import { bedInputFromSetup, solve, type SolveConstraints } from '../../model/solve';
 import { TENSION_MAX, TENSION_MIN, type SetupState } from '../../state/hash';
 import type { SetupAction } from '../../state/useSetup';
 import { useI18n } from '../../i18n/useI18n';
 import type { Key } from '../../i18n/en';
+import { Constraints } from './Constraints';
 import { TargetSliders } from './TargetSliders';
 import './Solver.css';
 
@@ -52,18 +54,30 @@ export function Solver(props: {
     saveTarget(next);
   }, []);
 
-  const constraints: SolveConstraints = useMemo(
-    () => ({
-      racketId: null,
-      materials: [] as Material[],
-      tensionRange: [TENSION_MIN, TENSION_MAX],
-      allowHybrid: true,
-    }),
-    [],
+  const [constraints, setConstraints] = useState<SolveConstraints>({
+    racketId: null,
+    materials: [],
+    tensionRange: [TENSION_MIN, TENSION_MAX],
+    allowHybrid: true,
+  });
+
+  const racket = setup.racketId ? racketById.get(setup.racketId) : undefined;
+
+  // Drop a lock that points at a racket the Lab no longer has selected.
+  const effective: SolveConstraints = useMemo(
+    () =>
+      constraints.racketId && constraints.racketId !== setup.racketId
+        ? { ...constraints, racketId: setup.racketId }
+        : constraints,
+    [constraints, setup.racketId],
   );
 
   const deferredTarget = useDeferredValue(target);
-  const results = useMemo(() => solve(deferredTarget, constraints), [deferredTarget, constraints]);
+  const deferredConstraints = useDeferredValue(effective);
+  const results = useMemo(
+    () => solve(deferredTarget, deferredConstraints),
+    [deferredTarget, deferredConstraints],
+  );
 
   const labels = useMemo(
     () => Object.fromEntries(ATTRS.map((a) => [a, t(`attr.${a}` as Key)])) as Record<Attr, string>,
@@ -86,6 +100,14 @@ export function Solver(props: {
             </button>
           </div>
           <TargetSliders value={target} labels={labels} onChange={setTarget} />
+
+          <Constraints
+            value={effective}
+            racketId={setup.racketId}
+            racketName={racket?.name ?? null}
+            unit={setup.unit}
+            onChange={setConstraints}
+          />
         </div>
 
         <div className="panel solve__panel solve__results">

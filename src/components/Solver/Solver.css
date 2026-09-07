@@ -142,3 +142,69 @@
 .solve-target__input:focus-visible::-moz-range-thumb {
   box-shadow: var(--ring);
 }
+
+.solve-constraints {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.solve-constraints__toggle {
+  align-self: flex-start;
+  padding-left: 0;
+}
+
+.solve-constraints__body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.solve-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.solve-check--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.solve-check input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+  cursor: inherit;
+}
+
+.solve-check__hint {
+  display: block;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.solve-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.solve-field__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.solve-field__value {
+  font-size: 13px;
+  color: var(--text);
+}
