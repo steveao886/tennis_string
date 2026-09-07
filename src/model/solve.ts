@@ -1,6 +1,6 @@
-import { racketById, stringById } from '../data';
+import { racketById, rackets, stringById, strings } from '../data';
 import { ATTRS, type Attrs, type Material, type Racket, type TennisString } from '../data/types';
-import type { SetupState } from '../state/hash';
+import { LINK_GAP, TENSION_MAX, TENSION_MIN, type SetupState } from '../state/hash';
 import { computeBed, type BedInput } from './stringbed';
 
 export interface SolveConstraints {
@@ -85,4 +85,110 @@ export function bedInputFromSetup(s: SetupState): BedInput {
     crossesTension: s.crossesTension,
     racket: s.racketId ? racketById.get(s.racketId) : undefined,
   };
+}
+
+/** A scored combination, kept in string-object form until it is handed to the UI. */
+interface Scored {
+  racketId: string | null;
+  mains: TennisString;
+  mainsGauge: number;
+  crosses: TennisString;
+  crossesGauge: number;
+  mainsTension: number;
+  crossesTension: number;
+  attrs: Attrs;
+  score: number;
+}
+
+/** Crosses follow mains by the Lab's link gap, floored at the Lab's minimum. */
+const crossesTensionFor = (mainsTension: number): number => Math.max(TENSION_MIN, mainsTension - LINK_GAP);
+
+/**
+ * The pool holds one entry per (racket, mains, crosses) triple: its best gauge
+ * and tension. Without this collapse a single string at 36 tensions x 4 gauges
+ * would flood any fixed-size top-K, and the diversity filter downstream would
+ * have almost nothing distinct left to choose from.
+ */
+type BestMap = Map<string, Scored>;
+
+function keep(best: BestMap, s: Scored): void {
+  const key = `${s.racketId ?? '-'}|${s.mains.id}|${s.crosses.id}`;
+  const prev = best.get(key);
+  if (prev === undefined || s.score > prev.score) best.set(key, s);
+}
+
+const ranked = (best: BestMap): Scored[] => [...best.values()].sort((a, b) => b.score - a.score);
+
+function evaluate(
+  target: Attrs,
+  racket: Racket | undefined,
+  mains: TennisString,
+  mainsGauge: number,
+  crosses: TennisString,
+  crossesGauge: number,
+  mainsTension: number,
+): Scored {
+  const crossesTension = crossesTensionFor(mainsTension);
+  const attrs = computeBed({ mains, crosses, mainsGauge, crossesGauge, mainsTension, crossesTension, racket });
+  const penalty = realismPenalty({ racket, mainsTension, mains, mainsGauge, crosses, crossesGauge });
+  const score = Math.max(0, Math.min(100, 100 - distanceTo(target, attrs) - penalty));
+  return { racketId: racket?.id ?? null, mains, mainsGauge, crosses, crossesGauge, mainsTension, crossesTension, attrs, score };
+}
+
+function racketPool(c: SolveConstraints): (Racket | undefined)[] {
+  if (c.racketId) {
+    const r = racketById.get(c.racketId);
+    return r ? [r] : [undefined];
+  }
+  return [undefined, ...rackets];
+}
+
+function stringPool(c: SolveConstraints): TennisString[] {
+  return c.materials.length === 0 ? strings : strings.filter((s) => c.materials.includes(s.material));
+}
+
+function tensionSteps(c: SolveConstraints): number[] {
+  const lo = Math.max(TENSION_MIN, Math.ceil(c.tensionRange[0]));
+  const hi = Math.min(TENSION_MAX, Math.floor(c.tensionRange[1]));
+  const out: number[] = [];
+  for (let t = lo; t <= hi; t++) out.push(t);
+  return out;
+}
+
+/** Same string on mains and crosses across every racket, gauge and tension. */
+function mainSweep(target: Attrs, c: SolveConstraints, steps: number[]): Scored[] {
+  const best: BestMap = new Map();
+  for (const racket of racketPool(c)) {
+    for (const s of stringPool(c)) {
+      for (const g of s.gauges) {
+        for (const t of steps) {
+          keep(best, evaluate(target, racket, s, g, s, g, t));
+        }
+      }
+    }
+  }
+  return ranked(best);
+}
+
+function toCandidate(s: Scored, target: Attrs): Candidate {
+  const gaps = {} as Attrs;
+  for (const a of ATTRS) gaps[a] = Math.round(s.attrs[a] - target[a]);
+  return {
+    racketId: s.racketId,
+    mainsId: s.mains.id,
+    mainsGauge: s.mainsGauge,
+    crossesId: s.crosses.id,
+    crossesGauge: s.crossesGauge,
+    mainsTension: s.mainsTension,
+    crossesTension: s.crossesTension,
+    attrs: s.attrs,
+    gaps,
+    score: s.score,
+  };
+}
+
+export function solve(target: Attrs, c: SolveConstraints): Candidate[] {
+  const steps = tensionSteps(c);
+  if (steps.length === 0) return [];
+  return mainSweep(target, c, steps).map((s) => toCandidate(s, target));
 }

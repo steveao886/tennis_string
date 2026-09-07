@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { stringById, racketById } from '../data';
-import type { Attrs, Racket } from '../data/types';
-import { distanceTo, realismPenalty, bedInputFromSetup } from './solve';
+import { stringById, racketById, strings } from '../data';
+import { ATTRS, type Attrs, type Racket } from '../data/types';
+import { distanceTo, realismPenalty, bedInputFromSetup, solve, type SolveConstraints } from './solve';
 import { DEFAULT_SETUP } from '../state/hash';
 import { computeBed } from './stringbed';
 
@@ -13,6 +13,13 @@ const flat = (v: number): Attrs => ({
   durability: v,
   tensionMaintenance: v,
 });
+
+const FULL: SolveConstraints = {
+  racketId: null,
+  materials: [],
+  tensionRange: [35, 70],
+  allowHybrid: false,
+};
 
 describe('distanceTo', () => {
   it('is zero for an exact match', () => {
@@ -88,5 +95,82 @@ describe('bedInputFromSetup', () => {
     expect(input.mainsTension).toBe(DEFAULT_SETUP.mainsTension);
     expect(input.racket).toBeUndefined();
     expect(computeBed(input).power).toBeGreaterThan(0);
+  });
+});
+
+describe('solve — main sweep', () => {
+  it('round-trips: a real setup used as its own target scores 100 and is reproduced', () => {
+    // Pro Staff 97 v14 (rec 50-60 lb) with RPM Blast 1.25 (a middle gauge) at
+    // 54/52 lb draws no realism penalty, so nothing can outscore it.
+    const racket = racketById.get('wilson-pro-staff-97-v14')!;
+    const rpm = stringById.get('babolat-rpm-blast')!;
+    const target = computeBed({
+      mains: rpm,
+      crosses: rpm,
+      mainsGauge: 1.25,
+      crossesGauge: 1.25,
+      mainsTension: 54,
+      crossesTension: 52,
+      racket,
+    });
+
+    const top = solve(target, FULL)[0];
+    expect(top.attrs).toEqual(target);
+    expect(top.score).toBeGreaterThanOrEqual(99);
+  });
+
+  it('returns results sorted by descending score', () => {
+    const out = solve(flat(60), FULL);
+    expect(out.length).toBeGreaterThan(1);
+    for (let i = 1; i < out.length; i++) expect(out[i - 1].score).toBeGreaterThanOrEqual(out[i].score);
+  });
+
+  it('reports gaps as actual minus target', () => {
+    const top = solve(flat(60), FULL)[0];
+    for (const a of ATTRS) expect(top.gaps[a]).toBe(Math.round(top.attrs[a] - 60));
+  });
+
+  it('honours a locked racket', () => {
+    const out = solve(flat(60), { ...FULL, racketId: 'head-speed-pro-2024' });
+    expect(out.length).toBeGreaterThan(0);
+    for (const c of out) expect(c.racketId).toBe('head-speed-pro-2024');
+  });
+
+  it('honours the material filter on both mains and crosses', () => {
+    const out = solve(flat(60), { ...FULL, materials: ['natural-gut'] });
+    expect(out.length).toBeGreaterThan(0);
+    for (const c of out) {
+      expect(stringById.get(c.mainsId)!.material).toBe('natural-gut');
+      expect(stringById.get(c.crossesId)!.material).toBe('natural-gut');
+    }
+  });
+
+  it('honours the tension range and keeps crosses at mains minus the link gap', () => {
+    const out = solve(flat(60), { ...FULL, tensionRange: [48, 52] });
+    expect(out.length).toBeGreaterThan(0);
+    for (const c of out) {
+      expect(c.mainsTension).toBeGreaterThanOrEqual(48);
+      expect(c.mainsTension).toBeLessThanOrEqual(52);
+      expect(c.crossesTension).toBe(c.mainsTension - 2);
+    }
+  });
+
+  it('only offers gauges the string actually comes in', () => {
+    for (const c of solve(flat(60), FULL)) {
+      expect(stringById.get(c.mainsId)!.gauges).toContain(c.mainsGauge);
+      expect(stringById.get(c.crossesId)!.gauges).toContain(c.crossesGauge);
+    }
+  });
+
+  it('returns an empty array when no string survives the filter', () => {
+    expect(solve(flat(60), { ...FULL, materials: ['kevlar'] })).toEqual([]);
+  });
+
+  it('returns an empty array for an inverted tension range', () => {
+    expect(solve(flat(60), { ...FULL, tensionRange: [60, 50] })).toEqual([]);
+  });
+
+  it('has no kevlar strings in the catalogue, which the previous test relies on', () => {
+    expect(strings.some((s) => s.material === 'kevlar')).toBe(false);
   });
 });
