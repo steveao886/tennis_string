@@ -1,12 +1,40 @@
-import { useDeferredValue, useMemo, useState, type Dispatch } from 'react';
-import { ATTRS, type Attr, type Material } from '../../data/types';
+import { useCallback, useDeferredValue, useMemo, useState, type Dispatch } from 'react';
+import { ATTRS, type Attr, type Attrs, type Material } from '../../data/types';
 import { computeBed } from '../../model/stringbed';
 import { bedInputFromSetup, solve, type SolveConstraints } from '../../model/solve';
 import { TENSION_MAX, TENSION_MIN, type SetupState } from '../../state/hash';
 import type { SetupAction } from '../../state/useSetup';
 import { useI18n } from '../../i18n/useI18n';
 import type { Key } from '../../i18n/en';
+import { TargetSliders } from './TargetSliders';
 import './Solver.css';
+
+const STORAGE = 'tsh.solve';
+
+function loadTarget(): Attrs | null {
+  try {
+    const raw = sessionStorage.getItem(STORAGE);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<Record<Attr, unknown>>;
+    const out = {} as Attrs;
+    for (const a of ATTRS) {
+      const v = parsed[a];
+      if (typeof v !== 'number' || !Number.isFinite(v)) return null;
+      out[a] = Math.max(0, Math.min(100, Math.round(v)));
+    }
+    return out;
+  } catch {
+    return null;
+  }
+}
+
+function saveTarget(t: Attrs): void {
+  try {
+    sessionStorage.setItem(STORAGE, JSON.stringify(t));
+  } catch {
+    /* ignore */
+  }
+}
 
 export function Solver(props: {
   setup: SetupState;
@@ -17,7 +45,12 @@ export function Solver(props: {
   const { t } = useI18n();
 
   const current = useMemo(() => computeBed(bedInputFromSetup(setup)), [setup]);
-  const [target] = useState(current);
+  const [target, setTargetState] = useState<Attrs>(() => loadTarget() ?? current);
+
+  const setTarget = useCallback((next: Attrs) => {
+    setTargetState(next);
+    saveTarget(next);
+  }, []);
 
   const constraints: SolveConstraints = useMemo(
     () => ({
@@ -46,7 +79,13 @@ export function Solver(props: {
 
       <div className="solve">
         <div className="panel solve__panel solve__inputs">
-          <div className="eyebrow">{t('solve.targets')}</div>
+          <div className="solve-inputs__head">
+            <span className="eyebrow">{t('solve.targets')}</span>
+            <button type="button" className="btn btn-sm btn-ghost" onClick={() => setTarget(current)}>
+              {t('solve.fromCurrent')}
+            </button>
+          </div>
+          <TargetSliders value={target} labels={labels} onChange={setTarget} />
         </div>
 
         <div className="panel solve__panel solve__results">
