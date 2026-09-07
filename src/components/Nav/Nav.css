@@ -95,7 +95,7 @@
   }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 560px) {
   .nav__subtitle {
     display: none;
   }
@@ -103,6 +103,20 @@
     padding: 0 11px;
     font-size: 12.5px;
     min-height: 36px;
+  }
+  /* Four sections plus the brand and the language toggle no longer fit on one
+     line; give the sections their own row instead of letting them scroll off. */
+  .nav__row {
+    flex-wrap: wrap;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    gap: 10px 16px;
+  }
+  .nav__sections {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
   }
 }
 
