@@ -128,20 +128,18 @@ export function Solver(props: {
           </div>
           {results.length === 0 && <p className="solve-empty">{t('solve.empty')}</p>}
           <div className="solve-list">
-            {results.map((c, i) => (
-              <div
-                key={`${c.racketId}|${c.mainsId}|${c.mainsGauge}|${c.crossesId}|${c.crossesGauge}|${c.mainsTension}`}
-                className="rise"
-                style={{ animationDelay: `${i * 30}ms` }}
-              >
-                <ResultCard
-                  candidate={c}
-                  target={target}
-                  labels={labels}
-                  unit={setup.unit}
-                  onLoad={() => loadCandidate(c)}
-                />
-              </div>
+            {results.map((c, rank) => (
+              // Keyed by rank, not by setup: the list is a live read-out that
+              // re-ranks on every slider tick, and remounting rows would make
+              // the whole column flash instead of letting the bars slide.
+              <ResultCard
+                key={rank}
+                candidate={c}
+                target={target}
+                labels={labels}
+                unit={setup.unit}
+                onLoad={() => loadCandidate(c)}
+              />
             ))}
           </div>
         </div>

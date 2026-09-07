@@ -51,7 +51,7 @@ export const en = {
   'solve.resultCount': '{n} setups',
   'solve.match': 'Match',
   'solve.noRacket': 'No racket',
-  'solve.sameString': 'Mains & crosses',
+  'solve.sameString': 'Full bed',
   'solve.mains': 'Mains',
   'solve.crosses': 'Crosses',
   'solve.tension': 'Tension',
