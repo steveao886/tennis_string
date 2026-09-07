@@ -213,9 +213,48 @@ function diversify(pool: Scored[], count: number, capRacket: boolean): Scored[] 
   return out;
 }
 
+/** Crosses materials worth pairing under a poly mains. */
+const SOFT_MATERIALS: Material[] = ['multifilament', 'synthetic-gut', 'natural-gut'];
+
+/** How many of the strongest poly-mains setups get a soft-crosses re-sweep. */
+const HYBRID_BASE = 40;
+
+/**
+ * Re-sweeps the strongest poly-mains candidates against soft crosses. Searching
+ * all 47x47 string pairs would mostly surface combinations nobody strings, so
+ * this covers the one hybrid pattern that is actually common.
+ */
+function hybridSweep(target: Attrs, base: Scored[], c: SolveConstraints, steps: number[]): Scored[] {
+  const softs = stringPool(c).filter((s) => SOFT_MATERIALS.includes(s.material));
+  if (softs.length === 0) return [];
+
+  const best: BestMap = new Map();
+  let expanded = 0;
+  for (const b of base) {
+    if (b.mains.material !== 'poly') continue;
+    if (expanded >= HYBRID_BASE) break;
+    expanded++;
+
+    const racket = b.racketId ? racketById.get(b.racketId) : undefined;
+    for (const x of softs) {
+      for (const xg of x.gauges) {
+        for (const t of steps) {
+          keep(best, evaluate(target, racket, b.mains, b.mainsGauge, x, xg, t));
+        }
+      }
+    }
+  }
+  return ranked(best);
+}
+
 export function solve(target: Attrs, c: SolveConstraints): Candidate[] {
   const steps = tensionSteps(c);
   if (steps.length === 0) return [];
+
   const pool = mainSweep(target, c, steps);
-  return diversify(pool, RESULT_COUNT, c.racketId === null).map((s) => toCandidate(s, target));
+  const merged = c.allowHybrid
+    ? [...pool, ...hybridSweep(target, pool, c, steps)].sort((a, b) => b.score - a.score)
+    : pool;
+
+  return diversify(merged, RESULT_COUNT, c.racketId === null).map((s) => toCandidate(s, target));
 }

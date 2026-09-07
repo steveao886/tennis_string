@@ -210,3 +210,57 @@ describe('solve — diversity', () => {
     expect(out.length).toBeLessThanOrEqual(6);
   });
 });
+
+describe('solve — hybrids', () => {
+  const HYBRID: SolveConstraints = { ...FULL, allowHybrid: true };
+
+  it('produces only same-string setups when hybrids are off', () => {
+    for (const c of solve(flat(60), FULL)) {
+      expect(c.crossesId).toBe(c.mainsId);
+      expect(c.crossesGauge).toBe(c.mainsGauge);
+    }
+  });
+
+  it('any hybrid it produces is poly mains with non-poly crosses', () => {
+    for (const c of solve(flat(60), HYBRID)) {
+      if (c.mainsId === c.crossesId) continue;
+      expect(stringById.get(c.mainsId)!.material).toBe('poly');
+      expect(stringById.get(c.crossesId)!.material).not.toBe('poly');
+    }
+  });
+
+  it('never scores worse than the same search without hybrids', () => {
+    const target = flat(60);
+    const withOut = solve(target, FULL)[0].score;
+    const withIn = solve(target, HYBRID)[0].score;
+    expect(withIn).toBeGreaterThanOrEqual(withOut - 1e-9);
+  });
+
+  it('finds a hybrid when only a hybrid can hit the target', () => {
+    const alu = stringById.get('luxilon-alu-power')!;
+    const gut = stringById.get('babolat-vs-touch')!;
+    const target = computeBed({
+      mains: alu,
+      crosses: gut,
+      mainsGauge: 1.25,
+      crossesGauge: gut.defaultGauge,
+      mainsTension: 52,
+      crossesTension: 50,
+      racket: undefined,
+    });
+    const top = solve(target, HYBRID)[0];
+    expect(top.score).toBeGreaterThan(solve(target, FULL)[0].score);
+  });
+
+  it('produces no hybrids when the material filter admits only poly', () => {
+    for (const c of solve(flat(60), { ...HYBRID, materials: ['poly'] })) {
+      expect(stringById.get(c.crossesId)!.material).toBe('poly');
+    }
+  });
+
+  it('completes an unlocked hybrid search in under 400 ms', () => {
+    const started = performance.now();
+    solve(flat(60), HYBRID);
+    expect(performance.now() - started).toBeLessThan(400);
+  });
+});
