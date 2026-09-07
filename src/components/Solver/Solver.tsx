@@ -1,13 +1,16 @@
 import { useCallback, useDeferredValue, useMemo, useState, type Dispatch } from 'react';
-import { racketById } from '../../data';
+import { racketById, stringById } from '../../data';
 import { ATTRS, type Attr, type Attrs } from '../../data/types';
 import { computeBed } from '../../model/stringbed';
-import { bedInputFromSetup, solve, type SolveConstraints } from '../../model/solve';
+import { bedInputFromSetup, solve, type Candidate, type SolveConstraints } from '../../model/solve';
 import { TENSION_MAX, TENSION_MIN, type SetupState } from '../../state/hash';
 import type { SetupAction } from '../../state/useSetup';
 import { useI18n } from '../../i18n/useI18n';
 import type { Key } from '../../i18n/en';
+import { useToast } from '../Toast/Toast';
 import { Constraints } from './Constraints';
+import { ResultCard } from './ResultCard';
+import { buildLoadActions } from './load';
 import { TargetSliders } from './TargetSliders';
 import './Solver.css';
 
@@ -45,6 +48,7 @@ export function Solver(props: {
 }): JSX.Element {
   const { setup } = props;
   const { t } = useI18n();
+  const { show } = useToast();
 
   const current = useMemo(() => computeBed(bedInputFromSetup(setup)), [setup]);
   const [target, setTargetState] = useState<Attrs>(() => loadTarget() ?? current);
@@ -84,6 +88,13 @@ export function Solver(props: {
     [t],
   );
 
+  function loadCandidate(c: Candidate) {
+    for (const action of buildLoadActions(c)) props.dispatch(action);
+    const chosen = c.racketId ? racketById.get(c.racketId) : undefined;
+    show(chosen ? t('toast.loadedRacket', { name: chosen.name }) : stringById.get(c.mainsId)!.name);
+    props.onGoLab();
+  }
+
   return (
     <section>
       <div className="section-head">
@@ -116,13 +127,23 @@ export function Solver(props: {
             <span className="solve-results__count num">{t('solve.resultCount', { n: results.length })}</span>
           </div>
           {results.length === 0 && <p className="solve-empty">{t('solve.empty')}</p>}
-          <ul className="solve-list">
-            {results.map((c) => (
-              <li key={`${c.racketId}|${c.mainsId}|${c.mainsGauge}|${c.crossesId}|${c.crossesGauge}|${c.mainsTension}`}>
-                <span className="num">{Math.round(c.score)}</span> · {labels.power}
-              </li>
+          <div className="solve-list">
+            {results.map((c, i) => (
+              <div
+                key={`${c.racketId}|${c.mainsId}|${c.mainsGauge}|${c.crossesId}|${c.crossesGauge}|${c.mainsTension}`}
+                className="rise"
+                style={{ animationDelay: `${i * 30}ms` }}
+              >
+                <ResultCard
+                  candidate={c}
+                  target={target}
+                  labels={labels}
+                  unit={setup.unit}
+                  onLoad={() => loadCandidate(c)}
+                />
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
     </section>
