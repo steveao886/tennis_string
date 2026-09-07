@@ -2,10 +2,11 @@ import { useI18n } from '../../i18n/useI18n';
 import type { Key } from '../../i18n/en';
 import './Nav.css';
 
-export type Section = 'lab' | 'rackets' | 'players';
+export type Section = 'lab' | 'solve' | 'rackets' | 'players';
 
 const SECTIONS: { key: Section; labelKey: Key }[] = [
   { key: 'lab', labelKey: 'nav.lab' },
+  { key: 'solve', labelKey: 'nav.solve' },
   { key: 'rackets', labelKey: 'nav.rackets' },
   { key: 'players', labelKey: 'nav.players' },
 ];

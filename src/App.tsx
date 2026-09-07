@@ -5,12 +5,13 @@ import { Nav, type Section } from './components/Nav/Nav';
 import { Hero } from './components/Shell/Hero';
 import { Footer } from './components/Shell/Footer';
 import { Lab } from './components/Lab/Lab';
+import { Solver } from './components/Solver/Solver';
 import { Rackets } from './components/Rackets/Rackets';
 import { Players } from './components/Players/Players';
 import { useSetup } from './state/useSetup';
 
 const SECTION_KEY = 'tsh.section';
-const SECTIONS: Section[] = ['lab', 'rackets', 'players'];
+const SECTIONS: Section[] = ['lab', 'solve', 'rackets', 'players'];
 
 function initialSection(): Section {
   try {
@@ -49,6 +50,7 @@ function Shell(): JSX.Element {
             <Lab setup={setup} dispatch={dispatch} />
           </>
         )}
+        {section === 'solve' && <Solver setup={setup} dispatch={dispatch} onGoLab={goLab} />}
         {section === 'rackets' && <Rackets setup={setup} dispatch={dispatch} onGoLab={goLab} />}
         {section === 'players' && <Players dispatch={dispatch} onGoLab={goLab} />}
       </main>
