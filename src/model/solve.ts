@@ -187,8 +187,35 @@ function toCandidate(s: Scored, target: Attrs): Candidate {
   };
 }
 
+const MAX_PER_RACKET = 2;
+const MAX_PER_MAINS = 2;
+
+/**
+ * Without this the top eight are typically one string at eight adjacent
+ * tensions, which tells the user nothing they could not have guessed.
+ *
+ * `capRacket` is off when the user locked a racket - every candidate shares it,
+ * so the per-racket cap would cut the list down to two.
+ */
+function diversify(pool: Scored[], count: number, capRacket: boolean): Scored[] {
+  const byRacket = new Map<string, number>();
+  const byMains = new Map<string, number>();
+  const out: Scored[] = [];
+  for (const s of pool) {
+    const rk = s.racketId ?? '-';
+    if (capRacket && (byRacket.get(rk) ?? 0) >= MAX_PER_RACKET) continue;
+    if ((byMains.get(s.mains.id) ?? 0) >= MAX_PER_MAINS) continue;
+    byRacket.set(rk, (byRacket.get(rk) ?? 0) + 1);
+    byMains.set(s.mains.id, (byMains.get(s.mains.id) ?? 0) + 1);
+    out.push(s);
+    if (out.length === count) break;
+  }
+  return out;
+}
+
 export function solve(target: Attrs, c: SolveConstraints): Candidate[] {
   const steps = tensionSteps(c);
   if (steps.length === 0) return [];
-  return mainSweep(target, c, steps).map((s) => toCandidate(s, target));
+  const pool = mainSweep(target, c, steps);
+  return diversify(pool, RESULT_COUNT, c.racketId === null).map((s) => toCandidate(s, target));
 }

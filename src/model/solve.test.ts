@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { stringById, racketById, strings } from '../data';
 import { ATTRS, type Attrs, type Racket } from '../data/types';
-import { distanceTo, realismPenalty, bedInputFromSetup, solve, type SolveConstraints } from './solve';
+import { distanceTo, realismPenalty, bedInputFromSetup, solve, RESULT_COUNT, type SolveConstraints } from './solve';
 import { DEFAULT_SETUP } from '../state/hash';
 import { computeBed } from './stringbed';
 
@@ -172,5 +172,41 @@ describe('solve — main sweep', () => {
 
   it('has no kevlar strings in the catalogue, which the previous test relies on', () => {
     expect(strings.some((s) => s.material === 'kevlar')).toBe(false);
+  });
+});
+
+describe('solve — diversity', () => {
+  it('returns at most RESULT_COUNT entries', () => {
+    expect(solve(flat(60), FULL).length).toBeLessThanOrEqual(RESULT_COUNT);
+  });
+
+  it('never lists the same racket more than twice', () => {
+    const counts = new Map<string, number>();
+    for (const c of solve(flat(60), FULL)) {
+      const k = c.racketId ?? '-';
+      counts.set(k, (counts.get(k) ?? 0) + 1);
+    }
+    for (const n of counts.values()) expect(n).toBeLessThanOrEqual(2);
+  });
+
+  it('still fills eight slots when the racket is locked, despite the per-racket cap', () => {
+    expect(solve(flat(60), { ...FULL, racketId: 'head-speed-pro-2024' })).toHaveLength(RESULT_COUNT);
+  });
+
+  it('never lists the same mains string more than twice', () => {
+    const counts = new Map<string, number>();
+    for (const c of solve(flat(60), FULL)) counts.set(c.mainsId, (counts.get(c.mainsId) ?? 0) + 1);
+    for (const n of counts.values()) expect(n).toBeLessThanOrEqual(2);
+  });
+
+  it('still fills eight slots for an ordinary target', () => {
+    expect(solve(flat(60), FULL)).toHaveLength(RESULT_COUNT);
+  });
+
+  it('returns fewer than eight when the catalogue cannot supply eight diverse setups', () => {
+    // Three synthetic gut strings, capped at two entries each: six at most.
+    const out = solve(flat(60), { ...FULL, materials: ['synthetic-gut'] });
+    expect(out.length).toBeGreaterThan(0);
+    expect(out.length).toBeLessThanOrEqual(6);
   });
 });
