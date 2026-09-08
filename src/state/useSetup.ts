@@ -1,6 +1,7 @@
 import { useEffect, useReducer, type Dispatch } from 'react';
 import { stringById, racketById, type Player } from '../data';
 import { DEFAULT_SETUP, LINK_GAP, clampTension, parseSetup, serializeSetup, type SetupState } from './hash';
+import type { StringJob } from './bag';
 import type { Unit } from '../model/units';
 
 export type SetupAction =
@@ -14,6 +15,7 @@ export type SetupAction =
   | { type: 'setLinkTensions'; on: boolean }
   | { type: 'setUnit'; unit: Unit }
   | { type: 'loadPlayer'; player: Player; mainsId: string; crossesId: string }
+  | { type: 'loadJob'; racketId: string | null; job: StringJob }
   | { type: 'reset' }
   | { type: 'hydrate'; state: SetupState };
 
@@ -56,6 +58,21 @@ export function reduce(s: SetupState, a: SetupAction): SetupState {
         crossesGauge: gaugeFor(a.crossesId, p.crosses.gauge),
         mainsTension: clampTension(p.tension.mains),
         crossesTension: clampTension(p.tension.crosses),
+        linkTensions: false,
+      };
+    }
+    case 'loadJob': {
+      const j = a.job;
+      if (!stringById.has(j.mainsId) || !stringById.has(j.crossesId)) return s;
+      return {
+        ...s,
+        racketId: a.racketId && racketById.has(a.racketId) ? a.racketId : null,
+        mainsId: j.mainsId,
+        mainsGauge: gaugeFor(j.mainsId, j.mainsGauge),
+        crossesId: j.crossesId,
+        crossesGauge: gaugeFor(j.crossesId, j.crossesGauge),
+        mainsTension: clampTension(j.mainsTension),
+        crossesTension: clampTension(j.crossesTension),
         linkTensions: false,
       };
     }

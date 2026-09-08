@@ -8,10 +8,11 @@ import { Lab } from './components/Lab/Lab';
 import { Solver } from './components/Solver/Solver';
 import { Rackets } from './components/Rackets/Rackets';
 import { Players } from './components/Players/Players';
+import { Bag } from './components/Bag/Bag';
 import { useSetup } from './state/useSetup';
 
 const SECTION_KEY = 'tsh.section';
-const SECTIONS: Section[] = ['lab', 'solve', 'rackets', 'players'];
+const SECTIONS: Section[] = ['lab', 'solve', 'rackets', 'players', 'bag'];
 
 function initialSection(): Section {
   try {
@@ -53,6 +54,7 @@ function Shell(): JSX.Element {
         {section === 'solve' && <Solver setup={setup} dispatch={dispatch} onGoLab={goLab} />}
         {section === 'rackets' && <Rackets setup={setup} dispatch={dispatch} onGoLab={goLab} />}
         {section === 'players' && <Players dispatch={dispatch} onGoLab={goLab} />}
+        {section === 'bag' && <Bag setup={setup} dispatch={dispatch} onGoLab={goLab} />}
       </main>
       <Footer />
     </>

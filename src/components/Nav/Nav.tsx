@@ -2,13 +2,14 @@ import { useI18n } from '../../i18n/useI18n';
 import type { Key } from '../../i18n/en';
 import './Nav.css';
 
-export type Section = 'lab' | 'solve' | 'rackets' | 'players';
+export type Section = 'lab' | 'solve' | 'rackets' | 'players' | 'bag';
 
 const SECTIONS: { key: Section; labelKey: Key }[] = [
   { key: 'lab', labelKey: 'nav.lab' },
   { key: 'solve', labelKey: 'nav.solve' },
   { key: 'rackets', labelKey: 'nav.rackets' },
   { key: 'players', labelKey: 'nav.players' },
+  { key: 'bag', labelKey: 'nav.bag' },
 ];
 
 export function Nav(props: { section: Section; onSelect: (s: Section) => void }): JSX.Element {
