@@ -1,7 +1,7 @@
 import { useCallback, useDeferredValue, useMemo, useState, type Dispatch } from 'react';
 import { racketById, stringById } from '../../data';
-import { ATTRS, type Attr, type Attrs } from '../../data/types';
-import { computeBed } from '../../model/stringbed';
+
+import { BED_ATTRS, computeBed, type BedAttr, type BedAttrs } from '../../model/stringbed';
 import { bedInputFromSetup, solve, type Candidate, type SolveConstraints } from '../../model/solve';
 import { TENSION_MAX, TENSION_MIN, type SetupState } from '../../state/hash';
 import type { SetupAction } from '../../state/useSetup';
@@ -16,13 +16,13 @@ import './Solver.css';
 
 const STORAGE = 'tsh.solve';
 
-function loadTarget(): Attrs | null {
+function loadTarget(): BedAttrs | null {
   try {
     const raw = sessionStorage.getItem(STORAGE);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as Partial<Record<Attr, unknown>>;
-    const out = {} as Attrs;
-    for (const a of ATTRS) {
+    const parsed = JSON.parse(raw) as Partial<Record<BedAttr, unknown>>;
+    const out = {} as BedAttrs;
+    for (const a of BED_ATTRS) {
       const v = parsed[a];
       if (typeof v !== 'number' || !Number.isFinite(v)) return null;
       out[a] = Math.max(0, Math.min(100, Math.round(v)));
@@ -33,7 +33,7 @@ function loadTarget(): Attrs | null {
   }
 }
 
-function saveTarget(t: Attrs): void {
+function saveTarget(t: BedAttrs): void {
   try {
     sessionStorage.setItem(STORAGE, JSON.stringify(t));
   } catch {
@@ -51,9 +51,9 @@ export function Solver(props: {
   const { show } = useToast();
 
   const current = useMemo(() => computeBed(bedInputFromSetup(setup)), [setup]);
-  const [target, setTargetState] = useState<Attrs>(() => loadTarget() ?? current);
+  const [target, setTargetState] = useState<BedAttrs>(() => loadTarget() ?? current);
 
-  const setTarget = useCallback((next: Attrs) => {
+  const setTarget = useCallback((next: BedAttrs) => {
     setTargetState(next);
     saveTarget(next);
   }, []);
@@ -84,7 +84,7 @@ export function Solver(props: {
   );
 
   const labels = useMemo(
-    () => Object.fromEntries(ATTRS.map((a) => [a, t(`attr.${a}` as Key)])) as Record<Attr, string>,
+    () => Object.fromEntries(BED_ATTRS.map((a) => [a, t(`attr.${a}` as Key)])) as Record<BedAttr, string>,
     [t],
   );
 

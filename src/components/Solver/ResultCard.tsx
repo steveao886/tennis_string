@@ -1,5 +1,5 @@
 import { racketById, stringById } from '../../data';
-import { ATTRS, type Attr, type Attrs } from '../../data/types';
+import { BED_ATTRS, type BedAttr, type BedAttrs } from '../../model/stringbed';
 import type { Candidate } from '../../model/solve';
 import { formatTension, type Unit } from '../../model/units';
 import { useI18n } from '../../i18n/useI18n';
@@ -20,8 +20,8 @@ function StringLine(props: { label: string; id: string; gauge: number }): JSX.El
 
 export function ResultCard(props: {
   candidate: Candidate;
-  target: Attrs;
-  labels: Record<Attr, string>;
+  target: BedAttrs;
+  labels: Record<BedAttr, string>;
   unit: Unit;
   onLoad: () => void;
 }): JSX.Element {
@@ -60,7 +60,7 @@ export function ResultCard(props: {
       <div className="hairline" />
 
       <div className="solve-card__attrs">
-        {ATTRS.map((a) => {
+        {BED_ATTRS.map((a) => {
           const value = c.attrs[a];
           const gap = c.gaps[a];
           return (

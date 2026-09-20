@@ -12,8 +12,8 @@ const candidate: Candidate = {
   crossesGauge: 1.3,
   mainsTension: 56,
   crossesTension: 54,
-  attrs: { power: 50, control: 50, spin: 50, comfort: 50, durability: 50, tensionMaintenance: 50 },
-  gaps: { power: 0, control: 0, spin: 0, comfort: 0, durability: 0, tensionMaintenance: 0 },
+  attrs: { power: 50, control: 50, spin: 50, comfort: 50, durability: 50, tensionMaintenance: 50, launch: 50 },
+  gaps: { power: 0, control: 0, spin: 0, comfort: 0, durability: 0, tensionMaintenance: 0, launch: 0 },
   score: 92,
 };
 

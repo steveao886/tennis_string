@@ -113,7 +113,7 @@ export function Rackets(props: { setup: SetupState; dispatch: Dispatch<SetupActi
 
               <div className="hairline" />
 
-              <AttrBars values={r.attrs} labels={labels} compact />
+              <AttrBars keys={ATTRS} values={r.attrs} labels={labels} compact />
 
               <p className="racket-card__blurb">{pick(r.blurb, lang)}</p>
 

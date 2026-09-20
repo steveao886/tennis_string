@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { racketById, stringById } from '../../data';
-import { ATTRS, type Attr } from '../../data/types';
-import { computeBed } from '../../model/stringbed';
+
+import { BED_ATTRS, computeBed, type BedAttr } from '../../model/stringbed';
 import { formatTension, type Unit } from '../../model/units';
 import { estimateDue, latestJob, todayISO, type BagRacket, type DueStatus, type StringJob } from '../../state/bag';
 import { useI18n } from '../../i18n/useI18n';
@@ -50,7 +50,7 @@ export function BagCard(props: {
   const job = latestJob(racket);
 
   const labels = useMemo(
-    () => Object.fromEntries(ATTRS.map((a) => [a, t(`attr.${a}` as Key)])) as Record<Attr, string>,
+    () => Object.fromEntries(BED_ATTRS.map((a) => [a, t(`attr.${a}` as Key)])) as Record<BedAttr, string>,
     [t],
   );
 
@@ -178,7 +178,7 @@ export function BagCard(props: {
             <>
               <div className="hairline" />
               <div className="eyebrow bag-card__attrs-head">{t('bag.attrs')}</div>
-              <AttrBars values={bed} labels={labels} compact />
+              <AttrBars keys={BED_ATTRS} values={bed} labels={labels} compact />
             </>
           )}
         </>

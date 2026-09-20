@@ -1,7 +1,7 @@
 import { racketById, rackets, stringById, strings } from '../data';
-import { ATTRS, type Attrs, type Material, type Racket, type TennisString } from '../data/types';
+import type { Material, Racket, TennisString } from '../data/types';
 import { LINK_GAP, TENSION_MAX, TENSION_MIN, type SetupState } from '../state/hash';
-import { computeBed, type BedInput } from './stringbed';
+import { BED_ATTRS, computeBed, type BedAttrs, type BedInput } from './stringbed';
 
 export interface SolveConstraints {
   /** Locked racket id, or null to search every racket plus "no racket". */
@@ -22,23 +22,23 @@ export interface Candidate {
   mainsTension: number;
   crossesTension: number;
   /** The setup's actual read-out. */
-  attrs: Attrs;
+  attrs: BedAttrs;
   /** actual minus target, per attribute, rounded. */
-  gaps: Attrs;
+  gaps: BedAttrs;
   /** 0-100 match quality, unrounded. */
   score: number;
 }
 
 export const RESULT_COUNT = 8;
 
-/** Root-mean-square distance across the six attributes. */
-export function distanceTo(target: Attrs, actual: Attrs): number {
+/** Root-mean-square distance across every bed attribute. */
+export function distanceTo(target: BedAttrs, actual: BedAttrs): number {
   let sum = 0;
-  for (const a of ATTRS) {
+  for (const a of BED_ATTRS) {
     const d = actual[a] - target[a];
     sum += d * d;
   }
-  return Math.sqrt(sum / ATTRS.length);
+  return Math.sqrt(sum / BED_ATTRS.length);
 }
 
 /**
@@ -96,7 +96,7 @@ interface Scored {
   crossesGauge: number;
   mainsTension: number;
   crossesTension: number;
-  attrs: Attrs;
+  attrs: BedAttrs;
   score: number;
 }
 
@@ -120,7 +120,7 @@ function keep(best: BestMap, s: Scored): void {
 const ranked = (best: BestMap): Scored[] => [...best.values()].sort((a, b) => b.score - a.score);
 
 function evaluate(
-  target: Attrs,
+  target: BedAttrs,
   racket: Racket | undefined,
   mains: TennisString,
   mainsGauge: number,
@@ -156,7 +156,7 @@ function tensionSteps(c: SolveConstraints): number[] {
 }
 
 /** Same string on mains and crosses across every racket, gauge and tension. */
-function mainSweep(target: Attrs, c: SolveConstraints, steps: number[]): Scored[] {
+function mainSweep(target: BedAttrs, c: SolveConstraints, steps: number[]): Scored[] {
   const best: BestMap = new Map();
   for (const racket of racketPool(c)) {
     for (const s of stringPool(c)) {
@@ -170,9 +170,9 @@ function mainSweep(target: Attrs, c: SolveConstraints, steps: number[]): Scored[
   return ranked(best);
 }
 
-function toCandidate(s: Scored, target: Attrs): Candidate {
-  const gaps = {} as Attrs;
-  for (const a of ATTRS) gaps[a] = Math.round(s.attrs[a] - target[a]);
+function toCandidate(s: Scored, target: BedAttrs): Candidate {
+  const gaps = {} as BedAttrs;
+  for (const a of BED_ATTRS) gaps[a] = Math.round(s.attrs[a] - target[a]);
   return {
     racketId: s.racketId,
     mainsId: s.mains.id,
@@ -224,7 +224,7 @@ const HYBRID_BASE = 40;
  * all 47x47 string pairs would mostly surface combinations nobody strings, so
  * this covers the one hybrid pattern that is actually common.
  */
-function hybridSweep(target: Attrs, base: Scored[], c: SolveConstraints, steps: number[]): Scored[] {
+function hybridSweep(target: BedAttrs, base: Scored[], c: SolveConstraints, steps: number[]): Scored[] {
   const softs = stringPool(c).filter((s) => SOFT_MATERIALS.includes(s.material));
   if (softs.length === 0) return [];
 
@@ -247,7 +247,7 @@ function hybridSweep(target: Attrs, base: Scored[], c: SolveConstraints, steps: 
   return ranked(best);
 }
 
-export function solve(target: Attrs, c: SolveConstraints): Candidate[] {
+export function solve(target: BedAttrs, c: SolveConstraints): Candidate[] {
   const steps = tensionSteps(c);
   if (steps.length === 0) return [];
 

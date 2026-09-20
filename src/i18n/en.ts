@@ -66,6 +66,7 @@ export const en = {
   'attr.comfort': 'Comfort',
   'attr.durability': 'Durability',
   'attr.tensionMaintenance': 'Tension hold',
+  'attr.launch': 'Launch',
 
   'material.poly': 'Polyester',
   'material.multifilament': 'Multifilament',

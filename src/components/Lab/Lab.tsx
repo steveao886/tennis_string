@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type Dispatch } from 'react';
 import { racketById, rackets, stringBrands, stringById, strings } from '../../data';
-import { ATTRS, type Attr, type Material, type Racket, type TennisString } from '../../data/types';
-import { computeBed, effectiveTension, type BedInput } from '../../model/stringbed';
+import type { Material, Racket, TennisString } from '../../data/types';
+import { BED_ATTRS, computeBed, effectiveTension, type BedAttr, type BedInput } from '../../model/stringbed';
 import { buildInsights } from '../../model/insights';
 import { formatTension } from '../../model/units';
 import { useI18n, type I18n } from '../../i18n/useI18n';
@@ -93,7 +93,7 @@ export function Lab(props: { setup: SetupState; dispatch: Dispatch<SetupAction> 
   const bed = useMemo(() => computeBed(input), [input]);
   const insights = useMemo(() => buildInsights(input), [input]);
   const labels = useMemo(
-    () => Object.fromEntries(ATTRS.map((a) => [a, t(`attr.${a}` as Key)])) as Record<Attr, string>,
+    () => Object.fromEntries(BED_ATTRS.map((a) => [a, t(`attr.${a}` as Key)])) as Record<BedAttr, string>,
     [t],
   );
 
@@ -243,7 +243,7 @@ export function Lab(props: { setup: SetupState; dispatch: Dispatch<SetupAction> 
 
         <hr className="hairline" />
         <div className="eyebrow">{t('lab.attributes')}</div>
-        <AttrBars values={bed} labels={labels} />
+        <AttrBars keys={BED_ATTRS} values={bed} labels={labels} />
 
         <hr className="hairline" />
         <div className="eyebrow">{t('lab.insights')}</div>

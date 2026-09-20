@@ -9,7 +9,7 @@ export const zh: Record<Key, string> = {
   'nav.langToggle': 'EN',
 
   'hero.title': '穿线工作台',
-  'hero.subtitle': '选线、选磅、选拍，看六维手感实时变化；再对照球星的真实穿法。',
+  'hero.subtitle': '选线、选磅、选拍，看手感六维加弹道实时变化；再对照球星的真实穿法。',
 
   'lab.inputs': '配置',
   'lab.readout': '手感读数',
@@ -66,6 +66,7 @@ export const zh: Record<Key, string> = {
   'attr.comfort': '舒适/手感',
   'attr.durability': '耐久',
   'attr.tensionMaintenance': '保磅性',
+  'attr.launch': '弹道',
 
   'material.poly': '聚酯线',
   'material.multifilament': '多芯尼龙线',

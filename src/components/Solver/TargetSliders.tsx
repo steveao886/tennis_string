@@ -1,15 +1,15 @@
-import { ATTRS, type Attr, type Attrs } from '../../data/types';
+import { BED_ATTRS, type BedAttr, type BedAttrs } from '../../model/stringbed';
 
 export function TargetSliders(props: {
-  value: Attrs;
-  labels: Record<Attr, string>;
-  onChange: (next: Attrs) => void;
+  value: BedAttrs;
+  labels: Record<BedAttr, string>;
+  onChange: (next: BedAttrs) => void;
 }): JSX.Element {
   const { value, labels, onChange } = props;
 
   return (
     <div className="solve-targets">
-      {ATTRS.map((a) => (
+      {BED_ATTRS.map((a) => (
         <div className="solve-target" key={a}>
           <label className="solve-target__label" htmlFor={`target-${a}`}>
             {labels[a]}

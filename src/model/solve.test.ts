@@ -1,18 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { stringById, racketById, strings } from '../data';
-import { ATTRS, type Attrs, type Racket } from '../data/types';
+import { ATTRS, type Racket } from '../data/types';
 import { distanceTo, realismPenalty, bedInputFromSetup, solve, RESULT_COUNT, type SolveConstraints } from './solve';
 import { DEFAULT_SETUP } from '../state/hash';
-import { computeBed } from './stringbed';
+import { BED_ATTRS, computeBed, type BedAttrs } from './stringbed';
 
-const flat = (v: number): Attrs => ({
-  power: v,
-  control: v,
-  spin: v,
-  comfort: v,
-  durability: v,
-  tensionMaintenance: v,
-});
+const flat = (v: number): BedAttrs =>
+  Object.fromEntries(BED_ATTRS.map((a) => [a, v])) as BedAttrs;
 
 const FULL: SolveConstraints = {
   racketId: null,
@@ -30,9 +24,9 @@ describe('distanceTo', () => {
     expect(distanceTo(flat(50), flat(60))).toBeCloseTo(10, 10);
   });
 
-  it('averages over six attributes, so one attribute off by 60 costs less than all six', () => {
-    const one: Attrs = { ...flat(50), power: 110 };
-    expect(distanceTo(flat(50), one)).toBeCloseTo(60 / Math.sqrt(6), 10);
+  it('averages over every attribute, so one attribute off by 60 costs less than all of them', () => {
+    const one: BedAttrs = { ...flat(50), power: 110 };
+    expect(distanceTo(flat(50), one)).toBeCloseTo(60 / Math.sqrt(BED_ATTRS.length), 10);
   });
 });
 

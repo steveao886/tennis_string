@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
-import type { Attr, Attrs } from '../../data/types';
-import { ATTRS } from '../../data/types';
+import { BED_ATTRS, type BedAttr, type BedAttrs } from '../../model/stringbed';
 import { useSpringValues } from '../../hooks/useSpringValues';
 import './Radar.css';
 
@@ -9,8 +8,10 @@ const RADIUS = 118;
 const LABEL_RADIUS = RADIUS + 20;
 const LEVELS = [25, 50, 75, 100];
 
+const STEP_DEG = 360 / BED_ATTRS.length;
+
 function angleFor(index: number): number {
-  return ((-90 + index * 60) * Math.PI) / 180;
+  return ((-90 + index * STEP_DEG) * Math.PI) / 180;
 }
 
 function pointAt(index: number, radius: number): [number, number] {
@@ -23,19 +24,19 @@ function clamp01to100(v: number): number {
 }
 
 function ringPoints(radius: number): string {
-  return ATTRS.map((_, i) => pointAt(i, radius).join(',')).join(' ');
+  return BED_ATTRS.map((_, i) => pointAt(i, radius).join(',')).join(' ');
 }
 
 function valuePoints(values: number[]): string {
   return values.map((v, i) => pointAt(i, (clamp01to100(v) / 100) * RADIUS).join(',')).join(' ');
 }
 
-export function Radar(props: { values: Attrs; labels: Record<Attr, string>; className?: string }): JSX.Element {
+export function Radar(props: { values: BedAttrs; labels: Record<BedAttr, string>; className?: string }): JSX.Element {
   const { values, labels, className } = props;
-  const target = useMemo(() => ATTRS.map((k) => values[k]), [values]);
+  const target = useMemo(() => BED_ATTRS.map((k) => values[k]), [values]);
   const animated = useSpringValues(target);
 
-  const titleText = ATTRS.map((k, i) => `${labels[k]} ${Math.round(animated[i])}`).join('\n');
+  const titleText = BED_ATTRS.map((k, i) => `${labels[k]} ${Math.round(animated[i])}`).join('\n');
   const svgClassName = ['radar', className].filter(Boolean).join(' ');
 
   return (
@@ -59,7 +60,7 @@ export function Radar(props: { values: Attrs; labels: Record<Attr, string>; clas
         />
       ))}
 
-      {ATTRS.map((k, i) => {
+      {BED_ATTRS.map((k, i) => {
         const [x, y] = pointAt(i, RADIUS);
         return <line key={k} x1={CENTER} y1={CENTER} x2={x} y2={y} stroke="var(--line)" strokeWidth={1} />;
       })}
@@ -75,10 +76,10 @@ export function Radar(props: { values: Attrs; labels: Record<Attr, string>; clas
 
       {animated.map((v, i) => {
         const [x, y] = pointAt(i, (clamp01to100(v) / 100) * RADIUS);
-        return <circle key={ATTRS[i]} cx={x} cy={y} r={4} fill="var(--accent)" stroke="var(--bg)" strokeWidth={1.5} />;
+        return <circle key={BED_ATTRS[i]} cx={x} cy={y} r={4} fill="var(--accent)" stroke="var(--bg)" strokeWidth={1.5} />;
       })}
 
-      {ATTRS.map((k, i) => {
+      {BED_ATTRS.map((k, i) => {
         const [lx, ly] = pointAt(i, LABEL_RADIUS);
         const cos = Math.cos(angleFor(i));
         const anchor = Math.abs(cos) < 0.2 ? 'middle' : cos > 0 ? 'start' : 'end';

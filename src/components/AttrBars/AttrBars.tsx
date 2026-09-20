@@ -1,5 +1,3 @@
-import type { Attr, Attrs } from '../../data/types';
-import { ATTRS } from '../../data/types';
 import './AttrBars.css';
 
 function levelClass(v: number): 'lvl-hi' | 'lvl-mid' | 'lvl-lo' {
@@ -8,13 +6,22 @@ function levelClass(v: number): 'lvl-hi' | 'lvl-mid' | 'lvl-lo' {
   return 'lvl-lo';
 }
 
-export function AttrBars(props: { values: Attrs; labels: Record<Attr, string>; compact?: boolean }): JSX.Element {
-  const { values, labels, compact } = props;
+/**
+ * Generic over the key set so the same bars render a racket's six authored
+ * attributes and a bed's seven computed ones.
+ */
+export function AttrBars<K extends string>(props: {
+  keys: readonly K[];
+  values: Record<K, number>;
+  labels: Record<K, string>;
+  compact?: boolean;
+}): JSX.Element {
+  const { keys, values, labels, compact } = props;
   const rootClass = ['attr-bars', compact ? 'attr-bars--compact' : ''].filter(Boolean).join(' ');
 
   return (
     <div className={rootClass}>
-      {ATTRS.map((k) => {
+      {keys.map((k) => {
         const v = Math.max(0, Math.min(100, values[k]));
         const label = labels[k];
         return (
