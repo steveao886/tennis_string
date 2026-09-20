@@ -26,7 +26,7 @@ export const KILLER: Record<Material, Killer> = {
   'natural-gut': 'abrasion',
 };
 
-/** What the median string of each material lasts. */
+/** What the median string of each material lasts while it is being swung. */
 export const BASE_PLAY_HOURS: Record<Material, number> = {
   poly: 15,
   kevlar: 15,
@@ -35,17 +35,35 @@ export const BASE_PLAY_HOURS: Record<Material, number> = {
   'natural-gut': 30,
 };
 
+/** What the median string of each material lasts sitting in a bag. */
+export const BASE_CALENDAR_DAYS: Record<Material, number> = {
+  poly: 90,
+  kevlar: 90,
+  multifilament: 180,
+  'synthetic-gut': 180,
+  'natural-gut': 180,
+};
+
 /**
  * The median of each material's own killing attribute. Anchoring on the median
  * keeps the middle of every material exactly where it was, so this opens up the
  * spread inside a material without moving the calibration between them.
  */
-export const REFERENCE_ATTR: Record<Material, number> = {
+export const PLAY_REFERENCE: Record<Material, number> = {
   poly: 49,
   kevlar: 49,
   multifilament: 44,
   'synthetic-gut': 56,
   'natural-gut': 55,
+};
+
+/** The same idea for the calendar clock, which reads tension hold everywhere. */
+export const CALENDAR_REFERENCE: Record<Material, number> = {
+  poly: 49,
+  kevlar: 49,
+  multifilament: 69,
+  'synthetic-gut': 58,
+  'natural-gut': 90,
 };
 
 const SCALE_MIN = 0.6;
@@ -86,8 +104,31 @@ export function playHoursLimit(
       ? mains.attrs.tensionMaintenance + 0.5 * gauge
       : mains.attrs.durability + gauge;
 
-  const scale = clamp(attr / REFERENCE_ATTR[material], SCALE_MIN, SCALE_MAX);
+  const scale = clamp(attr / PLAY_REFERENCE[material], SCALE_MIN, SCALE_MAX);
   const pattern = racket ? 1 - patternOpenness(racket) * OPENNESS_PENALTY : 1;
 
   return Math.round(base * scale * pattern);
+}
+
+/**
+ * Days the bed stays worth playing while nobody swings it.
+ *
+ * Nothing saws in a bag, so this clock has only one failure mode for every
+ * material: the string relaxing and stiffening on its own. That makes tension
+ * hold the attribute everywhere, even for the multifilaments whose tension hold
+ * was the flat, useless one on the play clock — and it is why gauge and pattern
+ * are deliberately absent here. Cross-section and string spacing decide how
+ * fast something cuts, and nothing is cutting.
+ *
+ * The material base stays, because it carries chemistry rather than spread:
+ * nylon and polyester age differently no matter how they rate for tension loss
+ * under play, which is a short-term measurement and not a shelf life.
+ */
+export function calendarDaysLimit(mains: TennisString | undefined): number {
+  const material: Material = mains?.material ?? 'poly';
+  const base = BASE_CALENDAR_DAYS[material];
+  if (!mains) return base;
+
+  const scale = clamp(mains.attrs.tensionMaintenance / CALENDAR_REFERENCE[material], SCALE_MIN, SCALE_MAX);
+  return Math.round(base * scale);
 }

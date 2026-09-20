@@ -1,9 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { racketById, stringById } from '../data';
-import { BASE_PLAY_HOURS, playHoursLimit } from '../model/wear';
+import { BASE_PLAY_HOURS, calendarDaysLimit, playHoursLimit } from '../model/wear';
 import {
   BAG_VERSION,
-  CALENDAR_DAYS_LIMIT,
   addJob,
   addRacket,
   daysBetween,
@@ -81,24 +80,33 @@ describe('estimateDue', () => {
     const e = estimateDue(job(), 3, '2026-01-15');
     expect(e.binding).toBe('play');
     expect(e.playLimit).toBe(playHoursLimit(stringById.get('babolat-rpm-blast'), 1.25));
-    expect(e.dayLimit).toBe(CALENDAR_DAYS_LIMIT.poly);
+    expect(e.dayLimit).toBe(calendarDaysLimit(stringById.get('babolat-rpm-blast')));
     expect(e.dueDate).toBe('2026-01-31');
     expect(e.status).toBe('fresh');
   });
 
   it('binds to the calendar clock when the racket mostly sits in the bag', () => {
-    // RPM Blast: 13 h limit / 1 h per week => 91 days, past the 90 day calendar limit
+    // RPM Blast: 13 h limit / 1 h per week => 91 days, past its 81 day calendar limit
     const e = estimateDue(job(), 1, '2026-01-15');
     expect(e.binding).toBe('calendar');
-    expect(e.dueDate).toBe('2026-04-01');
+    expect(e.dueDate).toBe('2026-03-23');
   });
 
   it('gives soft strings a longer life on both clocks', () => {
     const soft = job({ mainsId: 'tecnifibre-triax', crossesId: 'tecnifibre-triax', mainsGauge: 1.28, crossesGauge: 1.28 });
     const e = estimateDue(soft, 3, '2026-01-15');
     expect(e.playLimit).toBe(42);
-    expect(e.dayLimit).toBe(180);
+    expect(e.dayLimit).toBe(183);
     expect(e.dueDate).toBe('2026-04-09'); // 42 / 3 * 7 = 98 days
+  });
+
+  it('moves the play clock with gauge and pattern but never the calendar clock', () => {
+    const thin = job({ mainsId: 'tecnifibre-triax', crossesId: 'tecnifibre-triax', mainsGauge: 1.28, crossesGauge: 1.28 });
+    const thick = job({ mainsId: 'tecnifibre-triax', crossesId: 'tecnifibre-triax', mainsGauge: 1.33, crossesGauge: 1.33 });
+    const a = estimateDue(thin, 3, '2026-01-15', racketById.get('wilson-pro-staff-97-v14'));
+    const b = estimateDue(thick, 3, '2026-01-15', racketById.get('wilson-blade-98-18x20-v9'));
+    expect(b.playLimit).toBeGreaterThan(a.playLimit);
+    expect(b.dayLimit).toBe(a.dayLimit); // nothing cuts in a bag
   });
 
   it('shortens the play clock on an open pattern and stretches it on a dense one', () => {
@@ -126,7 +134,7 @@ describe('estimateDue', () => {
     const e = estimateDue(job(), 0, '2026-01-15');
     expect(e.binding).toBe('calendar');
     expect(e.playHours).toBe(0);
-    expect(e.dueDate).toBe('2026-04-01');
+    expect(e.dueDate).toBe('2026-03-23');
   });
 
   it('treats an unknown mains string as poly', () => {

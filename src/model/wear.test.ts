@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { racketById, stringById } from '../data';
-import { BASE_PLAY_HOURS, KILLER, REFERENCE_ATTR, playHoursLimit } from './wear';
+import { BASE_CALENDAR_DAYS, BASE_PLAY_HOURS, CALENDAR_REFERENCE, KILLER, PLAY_REFERENCE, calendarDaysLimit, playHoursLimit } from './wear';
 import { strings } from '../data/strings';
 
 const s = (id: string) => stringById.get(id)!;
@@ -17,7 +17,7 @@ describe('playHoursLimit', () => {
       if (!median) continue;
       const onReference = {
         ...median,
-        attrs: { ...median.attrs, [KILLER[material] === 'tension' ? 'tensionMaintenance' : 'durability']: REFERENCE_ATTR[material] },
+        attrs: { ...median.attrs, [KILLER[material] === 'tension' ? 'tensionMaintenance' : 'durability']: PLAY_REFERENCE[material] },
       };
       expect(playHoursLimit(onReference, 1.25)).toBe(BASE_PLAY_HOURS[material]);
     }
@@ -60,6 +60,53 @@ describe('playHoursLimit', () => {
       const h = playHoursLimit(x, x.defaultGauge);
       expect(h).toBeGreaterThanOrEqual(8);
       expect(h).toBeLessThanOrEqual(60);
+    }
+  });
+});
+
+describe('calendarDaysLimit', () => {
+  it('falls back to the poly base when the string is unknown', () => {
+    expect(calendarDaysLimit(undefined)).toBe(BASE_CALENDAR_DAYS.poly);
+  });
+
+  it('leaves a string on its material reference at that material base', () => {
+    const triax = s('tecnifibre-triax');
+    const onReference = { ...triax, attrs: { ...triax.attrs, tensionMaintenance: CALENDAR_REFERENCE.multifilament } };
+    expect(calendarDaysLimit(onReference)).toBe(BASE_CALENDAR_DAYS.multifilament);
+  });
+
+  /** In the bag it is the same pair again, and the gap is nearly two to one. */
+  it('separates 4G from RPM Blast on the shelf too', () => {
+    expect(calendarDaysLimit(s('luxilon-4g'))).toBeGreaterThan(calendarDaysLimit(s('babolat-rpm-blast')) * 1.5);
+  });
+
+  /**
+   * Nothing saws in a bag, so the two inputs that decide how fast something
+   * cuts have no business here. The contrast is the point: the play clock moves
+   * on both, and the shelf life is left with the string alone.
+   */
+  it('is left unmoved by the gauge and pattern the play clock reads', () => {
+    const triax = s('tecnifibre-triax');
+    expect(playHoursLimit(triax, 1.33)).not.toBe(playHoursLimit(triax, 1.28));
+    expect(playHoursLimit(triax, 1.28, r('wilson-blade-98-18x20-v9'))).not.toBe(
+      playHoursLimit(triax, 1.28, r('wilson-blade-98-16x19-v9')),
+    );
+    expect(calendarDaysLimit(triax)).toBe(
+      Math.round(BASE_CALENDAR_DAYS.multifilament * (triax.attrs.tensionMaintenance / CALENDAR_REFERENCE.multifilament)),
+    );
+  });
+
+  it('barely moves the multifilaments, which really are stable on the shelf', () => {
+    for (const x of strings.filter((y) => y.material === 'multifilament')) {
+      const drift = Math.abs(calendarDaysLimit(x) - BASE_CALENDAR_DAYS.multifilament);
+      expect(drift).toBeLessThan(BASE_CALENDAR_DAYS.multifilament * 0.15);
+    }
+  });
+
+  it('keeps every string in the library inside a believable range', () => {
+    for (const x of strings) {
+      expect(calendarDaysLimit(x)).toBeGreaterThanOrEqual(60);
+      expect(calendarDaysLimit(x)).toBeLessThanOrEqual(240);
     }
   });
 });

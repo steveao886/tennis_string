@@ -1,6 +1,6 @@
 import { racketById, stringById } from '../data';
-import type { Material, Racket } from '../data/types';
-import { playHoursLimit } from '../model/wear';
+import type { Racket } from '../data/types';
+import { calendarDaysLimit, playHoursLimit } from '../model/wear';
 import { clampTension } from './hash';
 
 /** One stringing of one racket. */
@@ -32,17 +32,10 @@ export const HOURS_PER_WEEK_MAX = 40;
 
 /**
  * Two clocks kill a string bed, and they are not the same clock. Play hours
- * cover how the bed dies while it is being swung, which `model/wear` works out
- * per string; calendar days cover the way a poly keeps stiffening in the bag
- * whether or not anybody swings it.
+ * cover how the bed dies while it is being swung; calendar days cover the way a
+ * string keeps stiffening in the bag whether or not anybody swings it.
+ * `model/wear` works out both per string.
  */
-export const CALENDAR_DAYS_LIMIT: Record<Material, number> = {
-  poly: 90,
-  kevlar: 90,
-  multifilament: 180,
-  'synthetic-gut': 180,
-  'natural-gut': 180,
-};
 
 const DAY_MS = 86_400_000;
 const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -104,9 +97,8 @@ export function estimateDue(
   racket?: Racket,
 ): DueEstimate {
   const mains = stringById.get(job.mainsId);
-  const material: Material = mains?.material ?? 'poly';
   const playLimit = playHoursLimit(mains, job.mainsGauge, racket);
-  const dayLimit = CALENDAR_DAYS_LIMIT[material];
+  const dayLimit = calendarDaysLimit(mains);
   const hours = Math.max(0, hoursPerWeek);
 
   const playDays = hours > 0 ? (playLimit / hours) * 7 : Infinity;
