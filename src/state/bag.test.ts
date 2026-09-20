@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
+import { racketById, stringById } from '../data';
+import { BASE_PLAY_HOURS, playHoursLimit } from '../model/wear';
 import {
   BAG_VERSION,
   CALENDAR_DAYS_LIMIT,
-  PLAY_HOURS_LIMIT,
   addJob,
   addRacket,
   daysBetween,
@@ -76,17 +77,17 @@ describe('date helpers', () => {
 
 describe('estimateDue', () => {
   it('binds to the play clock when the player hits often', () => {
-    // poly: 15 h limit / 3 h per week => 35 days, well inside the 90 day calendar limit
+    // RPM Blast: 13 h limit / 3 h per week => 30 days, well inside the 90 day calendar limit
     const e = estimateDue(job(), 3, '2026-01-15');
     expect(e.binding).toBe('play');
-    expect(e.playLimit).toBe(PLAY_HOURS_LIMIT.poly);
+    expect(e.playLimit).toBe(playHoursLimit(stringById.get('babolat-rpm-blast'), 1.25));
     expect(e.dayLimit).toBe(CALENDAR_DAYS_LIMIT.poly);
-    expect(e.dueDate).toBe('2026-02-05');
+    expect(e.dueDate).toBe('2026-01-31');
     expect(e.status).toBe('fresh');
   });
 
   it('binds to the calendar clock when the racket mostly sits in the bag', () => {
-    // poly: 15 h limit / 1 h per week => 105 days, past the 90 day calendar limit
+    // RPM Blast: 13 h limit / 1 h per week => 91 days, past the 90 day calendar limit
     const e = estimateDue(job(), 1, '2026-01-15');
     expect(e.binding).toBe('calendar');
     expect(e.dueDate).toBe('2026-04-01');
@@ -95,9 +96,16 @@ describe('estimateDue', () => {
   it('gives soft strings a longer life on both clocks', () => {
     const soft = job({ mainsId: 'tecnifibre-triax', crossesId: 'tecnifibre-triax', mainsGauge: 1.28, crossesGauge: 1.28 });
     const e = estimateDue(soft, 3, '2026-01-15');
-    expect(e.playLimit).toBe(30);
+    expect(e.playLimit).toBe(42);
     expect(e.dayLimit).toBe(180);
-    expect(e.dueDate).toBe('2026-03-12'); // 30 / 3 * 7 = 70 days
+    expect(e.dueDate).toBe('2026-04-09'); // 42 / 3 * 7 = 98 days
+  });
+
+  it('shortens the play clock on an open pattern and stretches it on a dense one', () => {
+    const soft = job({ mainsId: 'tecnifibre-triax', crossesId: 'tecnifibre-triax', mainsGauge: 1.28, crossesGauge: 1.28 });
+    const open = estimateDue(soft, 3, '2026-01-15', racketById.get('wilson-pro-staff-97-v14'));
+    const dense = estimateDue(soft, 3, '2026-01-15', racketById.get('wilson-blade-98-18x20-v9'));
+    expect(dense.playLimit).toBeGreaterThan(open.playLimit);
   });
 
   it('accumulates play hours from elapsed weeks', () => {
@@ -107,11 +115,11 @@ describe('estimateDue', () => {
   });
 
   it('reports fresh, due and overdue against the binding clock', () => {
-    // play clock binds at 35 days
-    expect(estimateDue(job(), 3, '2026-02-04').status).toBe('fresh'); // 34 days
-    expect(estimateDue(job(), 3, '2026-02-05').status).toBe('due'); // 35 days
-    expect(estimateDue(job(), 3, '2026-02-22').status).toBe('due'); // 52 days, < 1.5x
-    expect(estimateDue(job(), 3, '2026-02-25').status).toBe('overdue'); // 55 days, > 1.5x
+    // play clock binds at 30 days
+    expect(estimateDue(job(), 3, '2026-01-30').status).toBe('fresh'); // 29 days
+    expect(estimateDue(job(), 3, '2026-01-31').status).toBe('due'); // 30 days
+    expect(estimateDue(job(), 3, '2026-02-14').status).toBe('due'); // 44 days, < 1.5x
+    expect(estimateDue(job(), 3, '2026-02-15').status).toBe('overdue'); // 45 days, > 1.5x
   });
 
   it('falls back to the calendar clock when hours per week is zero', () => {
@@ -123,7 +131,7 @@ describe('estimateDue', () => {
 
   it('treats an unknown mains string as poly', () => {
     const e = estimateDue(job({ mainsId: 'does-not-exist' }), 3, '2026-01-15');
-    expect(e.playLimit).toBe(PLAY_HOURS_LIMIT.poly);
+    expect(e.playLimit).toBe(BASE_PLAY_HOURS.poly);
   });
 });
 

@@ -114,7 +114,7 @@ export const zh: Record<Key, string> = {
   'footer.source': 'GitHub 上的源码',
 
   'bag.title': '我的球拍',
-  'bag.subtitle': '记录你自己的球拍、每一次穿线和磅数。页面按线的材质和你的打球频率，算出这副线大概什么时候该换。',
+  'bag.subtitle': '记录你自己的球拍、每一次穿线和磅数。页面按这根线自己的耐久或保磅性、线径、拍型和你的打球频率，算出这副线大概什么时候该换。',
   'bag.empty': '还没有球拍。加一把进来，以后每次穿线记一笔，就不用再靠回忆了。',
   'bag.addRacket': '添加球拍',
   'bag.editRacket': '编辑',

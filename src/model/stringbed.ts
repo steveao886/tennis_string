@@ -41,6 +41,11 @@ export function beamMm(r: Racket): number {
   return m === null ? NEUTRAL_BEAM_MM : Number(m[1]);
 }
 
+/** How far the pattern sits from a 16x19, positive when it is more open. */
+export function patternOpenness(r: Racket): number {
+  return 19 - r.pattern[1] + (16 - r.pattern[0]);
+}
+
 export function computeBed(i: BedInput): BedAttrs {
   const out = {} as BedAttrs;
   for (const a of ATTRS) out[a] = MAINS_WEIGHT * i.mains.attrs[a] + CROSSES_WEIGHT * i.crosses.attrs[a];
@@ -79,7 +84,7 @@ export function computeBed(i: BedInput): BedAttrs {
 
   if (i.racket) {
     const r = i.racket;
-    const o = 19 - r.pattern[1] + (16 - r.pattern[0]);
+    const o = patternOpenness(r);
     out.spin += 4 * o;
     out.control -= 3 * o;
     const s = (r.stiffness - 65) / 5;

@@ -119,7 +119,7 @@ export const en = {
 
   'bag.title': 'My Bag',
   'bag.subtitle':
-    'Log your own frames, every stringing and every tension. The page projects when each bed is due from the string material and how much you actually play.',
+    'Log your own frames, every stringing and every tension. The page projects when each bed is due from what that string dies of, its gauge, the pattern it sits in and how much you actually play.',
   'bag.empty': 'No rackets yet. Add one, log each stringing, and stop relying on memory.',
   'bag.addRacket': 'Add racket',
   'bag.editRacket': 'Edit',

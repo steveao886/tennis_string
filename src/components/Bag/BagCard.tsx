@@ -70,7 +70,7 @@ export function BagCard(props: {
     });
   }, [job, frame]);
 
-  const due = job ? estimateDue(job, racket.hoursPerWeek, todayISO()) : null;
+  const due = job ? estimateDue(job, racket.hoursPerWeek, todayISO(), frame) : null;
 
   const jobLine = (j: StringJob): string => {
     const mains = stringById.get(j.mainsId);

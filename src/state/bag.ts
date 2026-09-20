@@ -1,5 +1,6 @@
 import { racketById, stringById } from '../data';
-import type { Material } from '../data/types';
+import type { Material, Racket } from '../data/types';
+import { playHoursLimit } from '../model/wear';
 import { clampTension } from './hash';
 
 /** One stringing of one racket. */
@@ -30,17 +31,11 @@ export const DEFAULT_HOURS_PER_WEEK = 3;
 export const HOURS_PER_WEEK_MAX = 40;
 
 /**
- * Two clocks kill a string bed, and they are not the same clock.
- * Play hours cover abrasion and notching; calendar days cover the way a poly
- * keeps stiffening in the bag whether or not anybody swings it.
+ * Two clocks kill a string bed, and they are not the same clock. Play hours
+ * cover how the bed dies while it is being swung, which `model/wear` works out
+ * per string; calendar days cover the way a poly keeps stiffening in the bag
+ * whether or not anybody swings it.
  */
-export const PLAY_HOURS_LIMIT: Record<Material, number> = {
-  poly: 15,
-  kevlar: 15,
-  multifilament: 30,
-  'synthetic-gut': 30,
-  'natural-gut': 30,
-};
 export const CALENDAR_DAYS_LIMIT: Record<Material, number> = {
   poly: 90,
   kevlar: 90,
@@ -97,15 +92,20 @@ export interface DueEstimate {
   status: DueStatus;
 }
 
-const materialOf = (stringId: string): Material => stringById.get(stringId)?.material ?? 'poly';
-
 /**
  * Projects when a job needs replacing. Both clocks run from the stringing date;
- * whichever expires first is the binding one.
+ * whichever expires first is the binding one. The frame is optional because the
+ * play clock only uses it to read the pattern.
  */
-export function estimateDue(job: StringJob, hoursPerWeek: number, today: string): DueEstimate {
-  const material = materialOf(job.mainsId);
-  const playLimit = PLAY_HOURS_LIMIT[material];
+export function estimateDue(
+  job: StringJob,
+  hoursPerWeek: number,
+  today: string,
+  racket?: Racket,
+): DueEstimate {
+  const mains = stringById.get(job.mainsId);
+  const material: Material = mains?.material ?? 'poly';
+  const playLimit = playHoursLimit(mains, job.mainsGauge, racket);
   const dayLimit = CALENDAR_DAYS_LIMIT[material];
   const hours = Math.max(0, hoursPerWeek);
 
