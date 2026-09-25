@@ -1,7 +1,7 @@
 import { useState, type Dispatch } from 'react';
 import type { SetupState } from '../../state/hash';
 import type { SetupAction } from '../../state/useSetup';
-import { useBag } from '../../state/useBag';
+import { useBag, type BagFileStatus } from '../../state/useBag';
 import {
   addJob,
   addRacket,
@@ -25,8 +25,11 @@ export function Bag(props: {
   const { setup, dispatch, onGoLab } = props;
   const { t } = useI18n();
   const { show } = useToast();
-  const [rackets, setRackets] = useBag();
+  const [rackets, setRackets, file] = useBag();
   const [adding, setAdding] = useState(false);
+  // In dev the file replaces whatever localStorage had; hide the old bag until it lands.
+  const loading = file.kind === 'loading';
+  const shown = loading ? [] : rackets;
 
   function handleLoad(racket: BagRacket, job: StringJob) {
     dispatch({ type: 'loadJob', racketId: racket.racketId, job });
@@ -46,15 +49,12 @@ export function Bag(props: {
         <p>{t('bag.subtitle')}</p>
       </div>
 
-      <div className="bag-note">
-        <span className="bag-note__icon">!</span>
-        <p>{t('bag.seedNote')}</p>
-      </div>
+      <BagNote file={file} />
 
-      {rackets.length === 0 && !adding && <p className="bag-blank muted">{t('bag.empty')}</p>}
+      {shown.length === 0 && !adding && !loading && <p className="bag-blank muted">{t('bag.empty')}</p>}
 
       <div className="bag-grid">
-        {rackets.map((r, i) => (
+        {shown.map((r, i) => (
           <BagCard
             key={r.id}
             racket={r}
@@ -95,5 +95,31 @@ export function Bag(props: {
         </div>
       )}
     </section>
+  );
+}
+
+/** The note above the grid says where the bag is coming from, and whether it is being saved. */
+function BagNote({ file }: { file: BagFileStatus }): JSX.Element | null {
+  const { t } = useI18n();
+  const text =
+    file.kind === 'off'
+      ? t('bag.seedNote')
+      : file.kind === 'synced'
+        ? t('bag.fileSynced')
+        : file.kind === 'unreadable'
+          ? t('bag.fileUnreadable')
+          : file.kind === 'partial'
+            ? t('bag.filePartial', { n: file.dropped })
+            : file.kind === 'failed'
+              ? t('bag.fileFailed')
+              : null;
+  if (!text) return null;
+
+  const info = file.kind === 'synced';
+  return (
+    <div className={info ? 'bag-note bag-note--info' : 'bag-note'}>
+      <span className="bag-note__icon">{info ? 'i' : '!'}</span>
+      <p>{text}</p>
+    </div>
   );
 }

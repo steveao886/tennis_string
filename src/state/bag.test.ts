@@ -10,6 +10,7 @@ import {
   formatDay,
   latestJob,
   parseBag,
+  parseBagFile,
   parseDay,
   removeJob,
   removeRacket,
@@ -175,6 +176,28 @@ describe('bag storage', () => {
     expect(out[0].jobs[0].mainsTension).toBe(70);
     expect(out[0].jobs[0].crossesTension).toBe(35);
     expect(out[0].jobs[0].mainsGauge).toBe(1.25); // RPM Blast default
+  });
+});
+
+describe('bag file', () => {
+  const file = (rackets: unknown[]): string => JSON.stringify({ v: BAG_VERSION, rackets }, null, 2);
+
+  it('refuses anything that is not a bag at all', () => {
+    expect(parseBagFile('not json')).toBeNull();
+    expect(parseBagFile('{"v":1}')).toBeNull();
+    expect(parseBagFile(JSON.stringify({ v: BAG_VERSION + 1, rackets: [] }))).toBeNull();
+  });
+
+  it('reads a clean file with nothing dropped', () => {
+    expect(parseBagFile(file([racket()]))).toEqual({ rackets: [racket()], dropped: 0 });
+  });
+
+  it('counts every racket and job it could not read', () => {
+    const ghostFrame = racket({ id: 'r2', racketId: 'not-a-racket', jobs: [job({ id: 'j9' })] });
+    const ghostString = racket({ jobs: [job(), job({ id: 'j2', mainsId: 'ghost-string' })] });
+    const out = parseBagFile(file([ghostString, ghostFrame]));
+    expect(out?.rackets.map((r) => r.id)).toEqual(['r1']);
+    expect(out?.dropped).toBe(3); // the ghost frame, its job, and the ghost-string job
   });
 });
 

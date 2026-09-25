@@ -30,6 +30,16 @@
   color: var(--text);
 }
 
+.bag-note--info {
+  background: var(--info-soft);
+  border-color: color-mix(in srgb, var(--info) 40%, transparent);
+}
+
+.bag-note--info .bag-note__icon {
+  background: color-mix(in srgb, var(--info) 22%, transparent);
+  color: var(--info);
+}
+
 .bag-grid {
   display: grid;
   gap: var(--gap);

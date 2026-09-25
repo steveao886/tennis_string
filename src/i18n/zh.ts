@@ -158,6 +158,10 @@ export const zh: Record<Key, string> = {
   'bag.bindingPlay': '打球时钟先到 —— 磨损和线槽是这副线的瓶颈。',
   'bag.bindingCalendar': '日历时钟先到 —— 就算不打，线也在自己老化。',
   'bag.seedNote': '这三把是预填的，日期只是估计值，请改成实际的穿线日期。',
+  'bag.fileSynced': '开发模式：这里读写的是 repo 里的 bag.local.json，不是浏览器存储。',
+  'bag.fileUnreadable': 'bag.local.json 读不出来，已暂停写回，免得覆盖它。修好文件后会自动恢复。',
+  'bag.filePartial': 'bag.local.json 里有 {n} 条记录认不出来（多半是球拍或球线 id 拼错了），已暂停写回，免得把它们冲掉。修好文件后会自动恢复。',
+  'bag.fileFailed': '写不进 bag.local.json，这次改动只存在浏览器里。dev 服务器还开着吗？',
 
   'toast.loadedJob': '已载入「{name}」的穿线配置',
   'toast.savedJob': '已记录「{name}」的穿线',

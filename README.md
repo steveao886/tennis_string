@@ -15,6 +15,8 @@ npm run dev
 
 `npm test` runs the Vitest suite (model behaviour, data integrity, i18n parity, URL-hash round trip). `npm run build` type-checks and builds to `dist/`.
 
+Under `npm run dev`, the 我的球拍 / My Rackets page reads and writes `bag.local.json` in the repo root instead of browser storage, and reloads it when the file is edited by hand (`vite/bagFile.ts`). The file is gitignored. The built site has no file and keeps using localStorage.
+
 ## Deploy
 
 Pushing to `main` runs `.github/workflows/deploy.yml`, which tests, builds and publishes `dist/` to GitHub Pages using the built-in `GITHUB_TOKEN`. No personal access token is needed.

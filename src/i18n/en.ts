@@ -163,6 +163,10 @@ export const en = {
   'bag.bindingPlay': 'The play clock runs out first — wear and notching are the limit here.',
   'bag.bindingCalendar': 'The calendar clock runs out first — the string ages in the bag either way.',
   'bag.seedNote': 'These three are pre-filled; the dates are estimates, so correct them.',
+  'bag.fileSynced': 'Dev mode: this page reads and writes bag.local.json in the repo, not browser storage.',
+  'bag.fileUnreadable': 'bag.local.json could not be read, so writing back is paused rather than overwrite it. It resumes once the file is fixed.',
+  'bag.filePartial': '{n} entries in bag.local.json were not recognised (usually a misspelt racket or string id). Writing back is paused so they are not lost; it resumes once the file is fixed.',
+  'bag.fileFailed': 'Could not write bag.local.json, so this change only lives in the browser for now. Is the dev server still running?',
 
   'toast.loadedJob': 'Loaded the setup from {name}',
   'toast.savedJob': 'Logged a stringing for {name}',

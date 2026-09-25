@@ -175,18 +175,47 @@ function sanitizeRacket(raw: unknown): BagRacket | null {
   };
 }
 
-export function parseBag(raw: string | null): BagRacket[] {
-  if (!raw) return [];
+/** The raw racket entries of a stored bag, or null when it is not one. */
+function readEntries(raw: string | null): unknown[] | null {
+  if (!raw) return null;
   let data: unknown;
   try {
     data = JSON.parse(raw);
   } catch {
-    return [];
+    return null;
   }
-  if (!data || typeof data !== 'object') return [];
+  if (!data || typeof data !== 'object') return null;
   const { v, rackets } = data as { v?: unknown; rackets?: unknown };
-  if (v !== BAG_VERSION || !Array.isArray(rackets)) return [];
-  return rackets.map(sanitizeRacket).filter((r): r is BagRacket => r !== null);
+  if (v !== BAG_VERSION || !Array.isArray(rackets)) return null;
+  return rackets;
+}
+
+const sanitizeAll = (entries: unknown[]): BagRacket[] =>
+  entries.map(sanitizeRacket).filter((r): r is BagRacket => r !== null);
+
+export function parseBag(raw: string | null): BagRacket[] {
+  const entries = readEntries(raw);
+  return entries ? sanitizeAll(entries) : [];
+}
+
+/**
+ * The strict read for the bag file the dev server keeps in the repo. That file
+ * gets edited by hand, and an id with a typo would be dropped quietly by
+ * parseBag and then saved out of existence on the next write — so this also
+ * counts every racket and job it could not read, and null means not a bag at all.
+ */
+export function parseBagFile(raw: string): { rackets: BagRacket[]; dropped: number } | null {
+  const entries = readEntries(raw);
+  if (!entries) return null;
+
+  const rackets = sanitizeAll(entries);
+  const jobsIn = (entry: unknown): number => {
+    const jobs = (entry as { jobs?: unknown } | null)?.jobs;
+    return Array.isArray(jobs) ? jobs.length : 0;
+  };
+  const found = entries.reduce<number>((n, e) => n + 1 + jobsIn(e), 0);
+  const kept = rackets.reduce((n, r) => n + 1 + r.jobs.length, 0);
+  return { rackets, dropped: found - kept };
 }
 
 export function serializeBag(rackets: BagRacket[]): string {
