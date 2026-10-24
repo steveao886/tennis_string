@@ -189,7 +189,7 @@ export const rackets: Racket[] = [
     headSize: 100,
     weightUnstrung: 300,
     balance: '32.0 cm / 6 pts HL',
-    stiffness: 62,
+    stiffness: 60,
     pattern: [16, 19],
     beam: '23 mm',
     recTension: [48, 57],
