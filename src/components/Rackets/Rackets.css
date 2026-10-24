@@ -61,6 +61,14 @@
   color: var(--clay);
 }
 
+.brand-yonex {
+  color: var(--grass);
+}
+
+.brand-babolat {
+  color: var(--warn);
+}
+
 .racket-card__name {
   font-size: 20px;
   letter-spacing: -0.02em;

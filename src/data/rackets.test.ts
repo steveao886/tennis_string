@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { ATTRS } from './types';
+import { ATTRS, RACKET_BRANDS } from './types';
 import { rackets } from './rackets';
 
 describe('rackets catalogue', () => {
-  it('has 20 well-formed Wilson/Head rackets with unique ids', () => {
+  it('has well-formed rackets with unique ids', () => {
     expect(rackets.length).toBeGreaterThanOrEqual(18);
     expect(new Set(rackets.map((r) => r.id)).size).toBe(rackets.length);
     for (const r of rackets) {
       expect(r.id).toMatch(/^[a-z0-9-]+$/);
-      expect(['Wilson', 'Head']).toContain(r.brand);
+      expect(RACKET_BRANDS).toContain(r.brand);
       expect(r.headSize).toBeGreaterThanOrEqual(95);
       expect(r.headSize).toBeLessThanOrEqual(104);
       expect(r.weightUnstrung).toBeGreaterThanOrEqual(280);

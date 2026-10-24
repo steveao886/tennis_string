@@ -18,9 +18,12 @@ export interface TennisString {
   blurb: L10n;
 }
 
+export const RACKET_BRANDS = ['Wilson', 'Head', 'Yonex', 'Babolat'] as const;
+export type RacketBrand = (typeof RACKET_BRANDS)[number];
+
 export interface Racket {
   id: string;
-  brand: 'Wilson' | 'Head';
+  brand: RacketBrand;
   family: string;
   name: string;
   headSize: number; // sq in

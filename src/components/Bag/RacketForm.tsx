@@ -1,11 +1,9 @@
 import { useMemo, useState } from 'react';
 import { racketById, rackets } from '../../data';
-import type { Racket } from '../../data/types';
+import { RACKET_BRANDS } from '../../data/types';
 import { DEFAULT_HOURS_PER_WEEK, HOURS_PER_WEEK_MAX, newId, type BagRacket } from '../../state/bag';
 import { useI18n } from '../../i18n/useI18n';
 import { Select, type SelectGroup } from '../Select/Select';
-
-const BRANDS: Racket['brand'][] = ['Wilson', 'Head'];
 
 /** Adds a racket, or edits the label and play frequency of one already in the bag. */
 export function RacketForm(props: {
@@ -22,7 +20,7 @@ export function RacketForm(props: {
 
   const groups: SelectGroup<string>[] = useMemo(
     () =>
-      BRANDS.map((brand) => ({
+      RACKET_BRANDS.map((brand) => ({
         label: brand,
         options: rackets.filter((r) => r.brand === brand).map((r) => ({ value: r.id, label: r.name })),
       })),

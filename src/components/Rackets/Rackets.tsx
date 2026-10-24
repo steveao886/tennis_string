@@ -1,6 +1,6 @@
 import { useMemo, useState, type Dispatch } from 'react';
 import { rackets, racketFamilies } from '../../data';
-import { ATTRS, type Attr, type Racket } from '../../data/types';
+import { ATTRS, RACKET_BRANDS, type Attr, type Racket, type RacketBrand } from '../../data/types';
 import type { SetupState } from '../../state/hash';
 import type { SetupAction } from '../../state/useSetup';
 import { useI18n } from '../../i18n/useI18n';
@@ -10,7 +10,7 @@ import { AttrBars } from '../AttrBars/AttrBars';
 import { useToast } from '../Toast/Toast';
 import './Rackets.css';
 
-type Brand = 'all' | 'Wilson' | 'Head';
+type Brand = 'all' | RacketBrand;
 
 export function Rackets(props: { setup: SetupState; dispatch: Dispatch<SetupAction>; onGoLab: () => void }): JSX.Element {
   const { setup, dispatch, onGoLab } = props;
@@ -50,12 +50,11 @@ export function Rackets(props: { setup: SetupState; dispatch: Dispatch<SetupActi
         <button type="button" className="filter" aria-pressed={brand === 'all'} onClick={() => selectBrand('all')}>
           {t('rackets.all')}
         </button>
-        <button type="button" className="filter" aria-pressed={brand === 'Wilson'} onClick={() => selectBrand('Wilson')}>
-          Wilson
-        </button>
-        <button type="button" className="filter" aria-pressed={brand === 'Head'} onClick={() => selectBrand('Head')}>
-          Head
-        </button>
+        {RACKET_BRANDS.map((b) => (
+          <button key={b} type="button" className="filter" aria-pressed={brand === b} onClick={() => selectBrand(b)}>
+            {b}
+          </button>
+        ))}
       </div>
 
       {brand !== 'all' && (

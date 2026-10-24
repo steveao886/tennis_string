@@ -79,7 +79,7 @@ export const zh: Record<Key, string> = {
   'shape.textured': '花纹',
 
   'rackets.title': '球拍',
-  'rackets.subtitle': 'Wilson 与 Head 的拍框，各自给线床带来什么变化，以及它们喜欢的磅数区间。',
+  'rackets.subtitle': 'Wilson、Head、Yonex 与 Babolat 的拍框，各自给线床带来什么变化，以及它们喜欢的磅数区间。',
   'rackets.all': '全部',
   'rackets.useInLab': '用于工作台',
   'rackets.headSize': '拍面',

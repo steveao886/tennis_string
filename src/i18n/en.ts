@@ -80,7 +80,7 @@ export const en = {
 
   'rackets.title': 'Rackets',
   'rackets.subtitle':
-    'Wilson and Head frames, what each one adds to the string bed, and the tension band they like.',
+    'Wilson, Head, Yonex and Babolat frames, what each one adds to the string bed, and the tension band they like.',
   'rackets.all': 'All',
   'rackets.useInLab': 'Use in Lab',
   'rackets.headSize': 'Head',

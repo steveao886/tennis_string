@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type Dispatch } from 'react';
 import { racketById, rackets, stringBrands, stringById, strings } from '../../data';
-import type { Material, Racket, TennisString } from '../../data/types';
+import { RACKET_BRANDS, type Material, type Racket, type TennisString } from '../../data/types';
 import { BED_ATTRS, computeBed, effectiveTension, type BedAttr, type BedInput } from '../../model/stringbed';
 import { buildInsights } from '../../model/insights';
 import { formatTension } from '../../model/units';
@@ -17,7 +17,6 @@ import { useToast } from '../Toast/Toast';
 import { TensionBlock } from './TensionBlock';
 import './Lab.css';
 
-const RACKET_BRANDS: Racket['brand'][] = ['Wilson', 'Head'];
 
 function materialChipClass(material: Material): string {
   if (material === 'poly') return 'chip chip-court';
