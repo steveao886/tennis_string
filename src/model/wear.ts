@@ -80,9 +80,8 @@ const OPENNESS_PENALTY = 0.07;
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
 /**
- * Play hours the mains should survive. Mains govern: they are what the crosses
- * saw through, and in a hybrid they are the half that dies first, so blending
- * in a soft cross string would only dilute the signal.
+ * Play hours one string survives when it is strung as the mains. A whole bed
+ * also has crosses, and `bedPlayHoursLimit` decides when they count.
  */
 export function playHoursLimit(
   mains: TennisString | undefined,
@@ -131,4 +130,42 @@ export function calendarDaysLimit(mains: TennisString | undefined): number {
 
   const scale = clamp(mains.attrs.tensionMaintenance / CALENDAR_REFERENCE[material], SCALE_MIN, SCALE_MAX);
   return Math.round(base * scale);
+}
+
+/**
+ * How much longer a string lasts as the crosses than it would as the mains. The
+ * bed reads a cross at CROSSES_WEIGHT against MAINS_WEIGHT for a main, so a
+ * cross has to fall half as far again before it hurts the bed as much.
+ *
+ * The slack is what keeps the mains in charge of most beds. Every poly in the
+ * library dies before every soft string even with the slack, so a conventional
+ * hybrid still runs on its poly mains, and a full bed always does. What the
+ * slack does not cover is the reverse hybrid: a poly cross goes dead under soft
+ * mains on its own clock, and stringing it sideways does not stop that clock.
+ *
+ * Written out rather than divided, because 0.6 / 0.4 lands a hair under 1.5 in
+ * floating point and would round a 22.5 h bed down. A test keeps it in step.
+ */
+export const CROSS_SLACK = 1.5;
+
+export interface BedStrings {
+  mains: TennisString | undefined;
+  mainsGauge: number;
+  crosses: TennisString | undefined;
+  crossesGauge: number;
+}
+
+/** Play hours the whole bed survives: the mains, or the crosses if they die first. */
+export function bedPlayHoursLimit(bed: BedStrings, racket?: Racket): number {
+  const mains = playHoursLimit(bed.mains, bed.mainsGauge, racket);
+  if (!bed.crosses) return mains;
+  const crosses = playHoursLimit(bed.crosses, bed.crossesGauge, racket) * CROSS_SLACK;
+  return Math.round(Math.min(mains, crosses));
+}
+
+/** Calendar days the whole bed lasts, with the same cross slack. */
+export function bedCalendarDaysLimit(bed: Pick<BedStrings, 'mains' | 'crosses'>): number {
+  const mains = calendarDaysLimit(bed.mains);
+  if (!bed.crosses) return mains;
+  return Math.round(Math.min(mains, calendarDaysLimit(bed.crosses) * CROSS_SLACK));
 }

@@ -1,7 +1,19 @@
 import { describe, it, expect } from 'vitest';
 import { racketById, stringById } from '../data';
-import { BASE_CALENDAR_DAYS, BASE_PLAY_HOURS, CALENDAR_REFERENCE, KILLER, PLAY_REFERENCE, calendarDaysLimit, playHoursLimit } from './wear';
+import {
+  BASE_CALENDAR_DAYS,
+  BASE_PLAY_HOURS,
+  CALENDAR_REFERENCE,
+  CROSS_SLACK,
+  KILLER,
+  PLAY_REFERENCE,
+  bedCalendarDaysLimit,
+  bedPlayHoursLimit,
+  calendarDaysLimit,
+  playHoursLimit,
+} from './wear';
 import { strings } from '../data/strings';
+import { CROSSES_WEIGHT, MAINS_WEIGHT } from './stringbed';
 
 const s = (id: string) => stringById.get(id)!;
 const r = (id: string) => racketById.get(id)!;
@@ -108,5 +120,68 @@ describe('calendarDaysLimit', () => {
       expect(calendarDaysLimit(x)).toBeGreaterThanOrEqual(60);
       expect(calendarDaysLimit(x)).toBeLessThanOrEqual(240);
     }
+  });
+});
+
+describe('the bed clocks', () => {
+  const ps97 = r('wilson-pro-staff-97-v14');
+  const bed = (mainsId: string, mainsGauge: number, crossesId: string, crossesGauge: number) => ({
+    mains: s(mainsId),
+    mainsGauge,
+    crosses: s(crossesId),
+    crossesGauge,
+  });
+
+  it('takes its cross slack from the bed weights', () => {
+    expect(CROSS_SLACK).toBeCloseTo(MAINS_WEIGHT / CROSSES_WEIGHT, 10);
+  });
+
+  it('reads the mains alone on a full bed', () => {
+    for (const x of strings) {
+      const full = { mains: x, mainsGauge: x.defaultGauge, crosses: x, crossesGauge: x.defaultGauge };
+      expect(bedPlayHoursLimit(full, ps97)).toBe(playHoursLimit(x, x.defaultGauge, ps97));
+      expect(bedCalendarDaysLimit(full)).toBe(calendarDaysLimit(x));
+    }
+  });
+
+  /** Every poly dies before every soft string, cross slack or not. */
+  it('leaves every conventional hybrid on its poly mains', () => {
+    const polys = strings.filter((x) => KILLER[x.material] === 'tension');
+    const soft = strings.filter((x) => KILLER[x.material] === 'abrasion');
+    for (const m of polys) {
+      for (const c of soft) {
+        const b = { mains: m, mainsGauge: m.defaultGauge, crosses: c, crossesGauge: c.defaultGauge };
+        expect(bedPlayHoursLimit(b, ps97)).toBe(playHoursLimit(m, m.defaultGauge, ps97));
+        expect(bedCalendarDaysLimit(b)).toBe(calendarDaysLimit(m));
+      }
+    }
+  });
+
+  /**
+   * The Federer-style bed. Triax mains alone say 42 h and 183 d, but the poly
+   * under them goes dead on its own clock, which does not stop because it is
+   * strung sideways.
+   */
+  it('lets a poly cross under soft mains cut both clocks', () => {
+    const b = bed('tecnifibre-triax', 1.28, 'yonex-poly-tour-pro', 1.25);
+    const crossHours = playHoursLimit(s('yonex-poly-tour-pro'), 1.25, ps97);
+    expect(bedPlayHoursLimit(b, ps97)).toBe(Math.round(crossHours * CROSS_SLACK));
+    expect(bedPlayHoursLimit(b, ps97)).toBeLessThan(playHoursLimit(s('tecnifibre-triax'), 1.28, ps97));
+    expect(bedCalendarDaysLimit(b)).toBe(Math.round(calendarDaysLimit(s('yonex-poly-tour-pro')) * CROSS_SLACK));
+    expect(bedCalendarDaysLimit(b)).toBeLessThan(calendarDaysLimit(s('tecnifibre-triax')));
+  });
+
+  /** A dead cross costs the bed less than a dead main, so it gets slack, not a pass. */
+  it('gives the cross more time than the same string would get as mains', () => {
+    const b = bed('tecnifibre-triax', 1.28, 'luxilon-4g', 1.25);
+    expect(bedPlayHoursLimit(b, ps97)).toBeGreaterThan(playHoursLimit(s('luxilon-4g'), 1.25, ps97));
+    // 4G holds tension well enough to sit on the shelf as long as Triax.
+    expect(bedCalendarDaysLimit(b)).toBe(calendarDaysLimit(s('tecnifibre-triax')));
+  });
+
+  it('falls back to the mains when the crosses are unknown', () => {
+    const b = { mains: s('tecnifibre-triax'), mainsGauge: 1.28, crosses: undefined, crossesGauge: 1.25 };
+    expect(bedPlayHoursLimit(b, ps97)).toBe(playHoursLimit(s('tecnifibre-triax'), 1.28, ps97));
+    expect(bedCalendarDaysLimit(b)).toBe(calendarDaysLimit(s('tecnifibre-triax')));
   });
 });

@@ -101,6 +101,15 @@ describe('estimateDue', () => {
     expect(e.dueDate).toBe('2026-04-09'); // 42 / 3 * 7 = 98 days
   });
 
+  it('lets a poly cross under soft mains set both clocks', () => {
+    // Triax mains alone would say 42 h and 183 d; the Poly Tour Pro cross runs
+    // out at 15 h and 90 d as mains, and gets half as long again as a cross.
+    const reverse = job({ mainsId: 'tecnifibre-triax', mainsGauge: 1.28, crossesId: 'yonex-poly-tour-pro', crossesGauge: 1.25 });
+    const e = estimateDue(reverse, 3, '2026-01-15');
+    expect(e.playLimit).toBe(23);
+    expect(e.dayLimit).toBe(135);
+  });
+
   it('moves the play clock with gauge and pattern but never the calendar clock', () => {
     const thin = job({ mainsId: 'tecnifibre-triax', crossesId: 'tecnifibre-triax', mainsGauge: 1.28, crossesGauge: 1.28 });
     const thick = job({ mainsId: 'tecnifibre-triax', crossesId: 'tecnifibre-triax', mainsGauge: 1.33, crossesGauge: 1.33 });
