@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type Dispatch } from 'react';
-import { racketById, rackets, stringBrands, stringById, strings } from '../../data';
+import { communityByStringId, racketById, rackets, stringBrands, stringById, strings } from '../../data';
 import { RACKET_BRANDS, type Material, type Racket, type TennisString } from '../../data/types';
 import { BED_ATTRS, computeBed, effectiveTension, type BedAttr, type BedInput } from '../../model/stringbed';
 import { buildInsights } from '../../model/insights';
@@ -14,6 +14,7 @@ import { Radar } from '../Radar/Radar';
 import { AttrBars } from '../AttrBars/AttrBars';
 import { InsightList } from '../InsightList/InsightList';
 import { useToast } from '../Toast/Toast';
+import { Community } from '../Community/Community';
 import { TensionBlock } from './TensionBlock';
 import './Lab.css';
 
@@ -24,8 +25,8 @@ function materialChipClass(material: Material): string {
   return 'chip';
 }
 
-function StringHint(props: { s: TennisString; lang: Lang; t: I18n['t'] }): JSX.Element {
-  const { s, lang, t } = props;
+function StringHint(props: { s: TennisString; lang: Lang; t: I18n['t']; community?: boolean }): JSX.Element {
+  const { s, lang, t, community = true } = props;
   return (
     <div className="lab-hint">
       <div className="lab-hint__chips">
@@ -33,6 +34,14 @@ function StringHint(props: { s: TennisString; lang: Lang; t: I18n['t'] }): JSX.E
         <span className="chip">{t(`shape.${s.shape}` as Key)}</span>
       </div>
       <p className="lab-hint__blurb">{pick(s.blurb, lang)}</p>
+      {community && (
+        <Community
+          take={communityByStringId.get(s.id)}
+          attrName={(a) => t(`attr.${a}` as Key)}
+          lang={lang}
+          t={t}
+        />
+      )}
     </div>
   );
 }
@@ -201,7 +210,7 @@ export function Lab(props: { setup: SetupState; dispatch: Dispatch<SetupAction> 
               value={setup.crossesId}
               onChange={(v) => dispatch({ type: 'setCrosses', id: v })}
               groups={stringGroups}
-              hint={<StringHint s={crosses} lang={lang} t={t} />}
+              hint={<StringHint s={crosses} lang={lang} t={t} community={!same} />}
             />
             <Select
               id="crosses-gauge"

@@ -4,6 +4,8 @@ dist/
 *.log
 .vite/
 .claude/
+.superpowers/
+.gemini-out/
 
 # The owner's racket bag, read and written by `npm run dev` (vite/bagFile.ts)
 bag.local.json*

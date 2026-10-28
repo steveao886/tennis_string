@@ -1,12 +1,14 @@
 import { strings } from './strings';
 import { rackets } from './rackets';
 import { players } from './players';
-import type { TennisString, Racket } from './types';
+import { community } from './community';
+import type { TennisString, Racket, CommunityTake } from './types';
 
 export * from './types';
-export { strings, rackets, players };
+export { strings, rackets, players, community };
 
 export const stringById: ReadonlyMap<string, TennisString> = new Map(strings.map((s) => [s.id, s]));
+export const communityByStringId: ReadonlyMap<string, CommunityTake> = new Map(community.map((c) => [c.stringId, c]));
 export const racketById: ReadonlyMap<string, Racket> = new Map(rackets.map((r) => [r.id, r]));
 
 export const stringBrands: string[] = [...new Set(strings.map((s) => s.brand))];

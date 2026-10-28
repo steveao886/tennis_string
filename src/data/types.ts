@@ -18,6 +18,52 @@ export interface TennisString {
   blurb: L10n;
 }
 
+/**
+ * What players report about a string on Reddit, kept apart from `attrs` on
+ * purpose: the scores stay editorial, and this sits next to them for the reader
+ * to weigh. Weight says how far to trust a claim — `consensus` is three or more
+ * people with no real pushback, `upvoted` is a single comment at 20+ points.
+ */
+export type ClaimWeight = 'consensus' | 'upvoted' | 'disputed' | 'minority';
+export type ClaimTone = 'praise' | 'complaint' | 'neutral';
+export type Coverage = 'rich' | 'some' | 'thin';
+
+export interface CommunityClaim {
+  tone: ClaimTone;
+  weight: ClaimWeight;
+  text: L10n;
+  people: number; // distinct users making the point
+  topScore: number; // best upvote count among them
+}
+
+/** A place where the community clearly contradicts one of our scores. */
+export interface CommunityConflict {
+  attr: Attr;
+  ours: number;
+  text: L10n;
+}
+
+export interface CommunitySource {
+  url: string;
+  title: string;
+  // Absent when the thread was only seen as a search excerpt.
+  score?: number;
+  comments?: number;
+  date: string; // YYYY-MM-DD
+}
+
+export interface CommunityTake {
+  stringId: string;
+  threads: number;
+  coverage: Coverage;
+  checkedOn: string; // YYYY-MM-DD
+  /** Set when Gemini compiled the take: it counted people itself and rarely saw upvotes. */
+  via?: 'gemini';
+  claims: CommunityClaim[];
+  conflicts: CommunityConflict[];
+  sources: CommunitySource[];
+}
+
 export const RACKET_BRANDS = ['Wilson', 'Head', 'Yonex', 'Babolat'] as const;
 export type RacketBrand = (typeof RACKET_BRANDS)[number];
 
